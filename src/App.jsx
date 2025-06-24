@@ -1,30 +1,13 @@
 import React from 'react';
-import './App.css'; // Import your CSS file
+import './App.css'; // Keep this for homepage-specific styles
+import Header from './components/Header'; // Import the Header component
+import Footer from './components/Footer'; // Import the Footer component
 
 function App() {
   return (
     <> {/* This is a React Fragment, used to return multiple elements without adding an extra DOM node */}
-      {/* Header */}
-      <header className="header">
-        <div className="nav-container">
-          <div className="logo">
-            <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{ height: '38px', width: '38px' }} />
-            PLATE UP
-          </div>
-          <nav>
-            <ul className="nav-links">
-              {/* In a real React app, you'd use react-router-dom for navigation links */}
-              <li><a href="/" className="active">Home</a></li> {/* Changed to '/' for homepage */}
-              <li><a href="/pages/recipe.html">Recipes</a></li>
-              <li><a href="/pages/AboutUs.html">About</a></li>
-            </ul>
-          </nav>
-          <div className="auth-buttons">
-            <a href="/pages/signin.html" className="btn-signin">Sign In</a>
-            <a href="/pages/Sign-up.html" className="btn-started">Get Started</a>
-          </div>
-        </div>
-      </header>
+      {/* Header is now a component */}
+      <Header />
 
       {/* Hero Section */}
       <section className="hero">
@@ -33,7 +16,6 @@ function App() {
         <p>Easily create personalized meal plans, smart shopping lists, and nutritious recipes—all in one seamless process.</p>
         <div className="hero-actions">
           <input type="email" placeholder="Enter your email to get started" />
-          {/* React requires 'a' tags that wrap buttons/elements to be properly structured, or use button directly */}
           <a style={{ margin: 0, padding: 0 }} href="/pages/Sign-up.html">
             <button style={{ height: '100%', fontSize: '16px' }} className="btn-getstarted">Start Planning</button>
           </a>
@@ -117,45 +99,8 @@ function App() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-container">
-          <div>
-            <div className="footer-brand">
-              <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{ height: '38px', width: '38px' }} />
-              PLATE UP
-            </div>
-            <p className="footer-description">
-              Simplify your healthy eating through personalized meal planning, nutritious recipe discovery, and organized shopping lists.
-            </p>
-          </div>
-          <div className="footer-section">
-            <h3>Features</h3>
-            <ul className="footer-links">
-              {/* In a real React app, you'd use react-router-dom for navigation links */}
-              <a style={{ textDecoration: 'none', color: '#a0aec0' }} href="/pages/recipe.html">
-                <p>Recipe Search</p>
-              </a>
-              <a style={{ textDecoration: 'none', color: '#a0aec0' }} href="/pages/signin.html">
-                <p>Meal Planning</p>
-              </a>
-              <a style={{ textDecoration: 'none', color: '#a0aec0' }} href="/pages/signin.html">
-                <p>Shopping Lists</p>
-              </a>
-            </ul>
-          </div>
-          <div className="footer-section">
-            <h3>Support</h3>
-            <ul className="footer-links">
-              <li><a href="#">Email: example@gmail.com</a></li>
-              <li><a href="#">Call: 0715 340 778</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>© 2025 Plate Up. All rights reserved.</p>
-        </div>
-      </footer>
+      {/* Footer is now a component */}
+      <Footer />
     </>
   );
 }

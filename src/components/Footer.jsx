@@ -1,4 +1,6 @@
 import React from 'react';
+// For actual navigation in a React app, you'd use react-router-dom's Link component
+// import { Link } from 'react-router-dom';
 
 function Footer() {
   return (
@@ -6,6 +8,7 @@ function Footer() {
       <div className="footer-container">
         <div>
           <div className="footer-brand">
+            {/* Image paths are relative to the public folder */}
             <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{ height: '38px', width: '38px' }} />
             PLATE UP
           </div>
