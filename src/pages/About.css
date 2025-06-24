@@ -1,0 +1,119 @@
+
+h1 {
+  text-align: left;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.about-intro {
+  margin-bottom: 2rem;
+  font-size: 1.08em;
+}
+
+.brand {
+  color: #28e28b;
+  font-weight: bold;
+}
+
+.about-green {
+  color: #00d2a0;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+}
+
+.about-story {
+  border: 2px solid #00d2a0;
+  border-radius: 8px;
+  background: #f7f7f7;
+  padding: 1.2rem 1rem;
+  margin: 2rem 0;
+}
+
+.about-story h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.values-title {
+  text-align: center;
+  margin-top: 2.5rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.value-card {
+  background: #e6faf1;
+  border-radius: 8px;
+  padding: 1.2rem 1rem;
+  min-width: 150px;
+  max-width: 180px;
+  flex: 1 1 150px;
+  text-align: center;
+  border: 1px solid #b2f5ea;
+}
+
+.value-icon {
+  height: 32px;
+  margin-bottom: 0.7rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.trend {
+  width: 32px;
+  margin-bottom: 0.7rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.value-card h4 {
+  color: #28e28b;
+  margin-bottom: 0.5rem;
+  font-size: 1.05em;
+  font-weight: 600;
+}
+
+.value-card p {
+  font-size: 0.98em;
+  color: #222;
+}
+
+.about-join {
+  border: 2px solid #00d2a0;
+  border-radius: 8px;
+  background: #f7f7f7;
+  padding: 1.2rem 1rem 2rem 1rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.about-join h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.about-join .btn-getstarted {
+  margin-top: 1rem;
+  font-size: 1em;
+  padding: 0.5rem 1.5rem;
+}
+

@@ -43,7 +43,6 @@ body {
   font-size: 1.2rem;
 }
 
-/* Note: .logo-icon class seems unused in your HTML, but keeping it if it's for a different scenario */
 .logo-icon {
   width: 30px;
   height: 30px;
@@ -118,144 +117,7 @@ body {
   padding: 3rem 2rem;
 }
 
-/* ABOUT US PAGE SPECIFIC STYLES - Moved here because the About Us content HTML was provided alongside common styles.
-   In a larger app, these would ideally go into a dedicated AboutUs.css */
-h1 {
-  text-align: left;
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1.2rem;
-}
-
-.about-intro {
-  margin-bottom: 2rem;
-  font-size: 1.08em;
-}
-
-.brand {
-  color: #28e28b;
-  font-weight: bold;
-}
-
-.about-green {
-  color: #00d2a0;
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
-  font-size: 1.15rem;
-}
-
-.about-story {
-  border: 2px solid #00d2a0;
-  border-radius: 8px;
-  background: #f7f7f7;
-  padding: 1.2rem 1rem;
-  margin: 2rem 0;
-}
-
-.about-story h3 {
-  margin-top: 0;
-  margin-bottom: 0.7rem;
-  font-size: 1.1rem;
-  color: #222;
-}
-
-.values-title {
-  text-align: center;
-  margin-top: 2.5rem;
-  margin-bottom: 1.2rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.values {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-items: center;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 2.5rem;
-}
-
-.value-card {
-  background: #e6faf1;
-  border-radius: 8px;
-  padding: 1.2rem 1rem;
-  min-width: 150px;
-  max-width: 180px;
-  flex: 1 1 150px;
-  text-align: center;
-  border: 1px solid #b2f5ea;
-}
-
-.value-icon {
-  height: 32px;
-  margin-bottom: 0.7rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.trend {
-  width: 32px;
-  margin-bottom: 0.7rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.value-card h4 {
-  color: #28e28b;
-  margin-bottom: 0.5rem;
-  font-size: 1.05em;
-  font-weight: 600;
-}
-
-.value-card p {
-  font-size: 0.98em;
-  color: #222;
-}
-
-.about-join {
-  border: 2px solid #00d2a0;
-  border-radius: 8px;
-  background: #f7f7f7;
-  padding: 1.2rem 1rem 2rem 1rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.about-join h3 {
-  margin-top: 0;
-  margin-bottom: 0.7rem;
-  font-size: 1.1rem;
-  color: #222;
-}
-
-.about-join .btn-getstarted {
-  margin-top: 1rem;
-  font-size: 1em;
-  padding: 0.5rem 1.5rem;
-}
-
-/* COMMON BUTTON STYLES */
-/* Note: btn-getstarted is also in App.css, ensure specificity if overrides are needed */
-.btn-getstarted {
-  background-color: #00d2a0;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid #00d2a0;
-  transition: 0.3s;
-}
-
-.btn-getstarted:hover {
-  opacity: 0.8;
-  background-color: #28e28b;
-  border-color: black;
-  color: black;
-}
-
+/* BUTTON STYLES (Generic) */
 .btn-view {
   padding: 0.8rem;
   background: transparent;
@@ -305,13 +167,11 @@ h1 {
 }
 
 /* CARD STYLES (Global/Generic) */
-/* Note: There's a .card definition in App.css as well with different shadow/border-radius.
-   The one here will act as the global default. */
 .card {
   background: white;
-  border-radius: 16px; /* Different from 8px in App.css */
+  border-radius: 16px; 
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Different from App.css */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
   transition: all 0.3s ease;
   border: 1px solid #f0f0f0;
 }
@@ -417,36 +277,7 @@ h1 {
     gap: 2rem;
     text-align: center;
   }
-  /*
-     The following responsive rules were likely from the AboutS.css or original App.css
-     and might need to be specific to particular pages or components if not truly global.
-     Keeping them here as they were provided in the 'common styles' block previously.
-  */
-  .header-container,
-  .footer-main {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    max-width: 98vw;
-    padding: 0 1rem;
-    gap: 1.5rem;
-  }
-  .values {
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-  .footer-main {
-    gap: 2rem;
-  }
-  .footer-logo,
-  .footer-features,
-  .footer-support {
-    min-width: 0;
-    width: 100%;
-  }
-  .main-content {
-    padding: 0 0.5rem 2rem 0.5rem;
-  }
+ 
 }
 
 /* ANIMATIONS */
