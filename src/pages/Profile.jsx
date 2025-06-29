@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import '../styles/Profile.css'; // Import your specific styles for the Profile page
 
 const Profile = () => {
@@ -8,21 +9,27 @@ const Profile = () => {
       <header className="header">
         <div className="nav-container">
           <div className="logo">
-            <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
-            PLATE UP
+            {/* Logo linking to the signed-in home page */}
+            <Link to="/home-signed-in" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
+              PLATE UP
+            </Link>
           </div>
           <nav>
             <ul className="nav-links">
-              <li><a href="#" className="active">Home</a></li>
-              <li><a href="/pages/recipe-S.html">Recipes</a></li>
-              <a href="/pages/meal-planner.html">Meal Plans</a>
-              <a href="/pages/favourites.html">Favourites</a>
-              <li><a href="/pages/AboutUs-S.html">About</a></li>
+              {/* Home link - should not be active on Profile page */}
+              <li><Link to="/home-signed-in">Home</Link></li>
+              <li><Link to="/recipes-signed-in">Recipes</Link></li> {/* Changed from recipe-S.html */}
+              {/* These were not in <li>, adding for consistency */}
+              <li><Link to="/meal-planner">Meal Plans</Link></li> {/* Changed from meal-planner.html */}
+              <li><Link to="/favourites">Favourites</Link></li> {/* Changed from favourites.html */}
+              <li><Link to="/about-signed-in">About</Link></li> {/* Changed from AboutUs-S.html */}
             </ul>
           </nav>
           <div className="auth-buttons">
-            <a href="/pages/index.html" className="btn-signin">Log Out</a>
-            <a href="/pages/Profile.html" className="btn-started">Profile</a>
+            <Link to="/" className="btn-signin">Log Out</Link> {/* Link to the public homepage for logout */}
+            {/* Profile link should be active on this page */}
+            <Link to="/profile" className="btn-started active">Profile</Link> {/* Changed from Profile.html */}
           </div>
         </div>
       </header>
@@ -64,8 +71,11 @@ const Profile = () => {
         <div className="footer-container">
           <div>
             <div className="footer-brand">
-              <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
-              PLATE UP
+              {/* Logo in footer, linking to home page */}
+              <Link to="/home-signed-in" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
+                PLATE UP
+              </Link>
             </div>
             <p className="footer-description">
               Simplify your healthy eating through personalized meal planning, nutritious recipe discovery, and organized shopping lists.
@@ -74,22 +84,30 @@ const Profile = () => {
           <div className="footer-section">
             <h3>Features</h3>
             <ul className="footer-links">
-              <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/recipe-S.html">
-                <p>Recipe Search</p>
-              </a>
-              <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/meal-planner.html">
-                <p>Meal Planning</p>
-              </a>
-              <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/shoppinglist.html">
-                <p>Shopping Lists</p>
-              </a>
+              {/* Corrected structure: <p> tag removed, text directly in Link */}
+              <li>
+                <Link to="/recipes-signed-in" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                  Recipe Search
+                </Link>
+              </li>
+              <li>
+                <Link to="/meal-planner" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                  Meal Planning
+                </Link>
+              </li>
+              <li>
+                <Link to="/shopping-list" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                  Shopping Lists
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="footer-section">
             <h3>Support</h3>
             <ul className="footer-links">
-              <li><a href="#">Email: example@gmail.com</a></li>
-              <li><a href="#">Call: 0715 340 778</a></li>
+              {/* Email and Call links are external, so they remain <a> tags */}
+              <li><a href="mailto:example@gmail.com">Email: example@gmail.com</a></li>
+              <li><a href="tel:+254715340778">Call: 0715 340 778</a></li>
             </ul>
           </div>
         </div>

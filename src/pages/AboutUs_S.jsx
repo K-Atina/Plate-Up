@@ -9,13 +9,15 @@ function AboutUsSignedIn() {
       <header className="header">
         <div className="nav-container">
           <div className="logo">
-            <img
-              src="/icons/Logo.png"
-              alt="Logo"
-              className="logo-img"
-              style={{ height: "38px", width: "38px" }}
-            />
-            PLATE UP
+            <Link to="/home-signed-in" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <img
+                src="/icons/Logo.png"
+                alt="Logo"
+                className="logo-img"
+                style={{ height: "38px", width: "38px" }}
+              />
+              PLATE UP
+            </Link>
           </div>
           <nav>
             <ul className="nav-links">
@@ -23,7 +25,8 @@ function AboutUsSignedIn() {
               <li><Link to="/recipes-signed-in">Recipes</Link></li>
               <li><Link to="/meal-planner">Meal Plans</Link></li>
               <li><Link to="/favourites">Favourites</Link></li>
-              <li><a href="#" className="active">About</a></li>
+              {/* Corrected 'About' link to point to the signed-in about page and keep active class */}
+              <li><Link to="/about-signed-in" className="active">About</Link></li>
             </ul>
           </nav>
           <div className="auth-buttons">
@@ -100,13 +103,15 @@ function AboutUsSignedIn() {
         <div className="footer-container">
           <div>
             <div className="footer-brand">
-              <img
-                src="/icons/Logo.png"
-                alt="Logo"
-                className="logo-img"
-                style={{ height: "38px", width: "38px" }}
-              />
-              PLATE UP
+              <Link to="/home-signed-in" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <img
+                  src="/icons/Logo.png"
+                  alt="Logo"
+                  className="logo-img"
+                  style={{ height: "38px", width: "38px" }}
+                />
+                PLATE UP
+              </Link>
             </div>
             <p className="footer-description">
               Simplify your healthy eating through personalized meal planning, nutritious recipe discovery, and organized shopping lists.
@@ -123,8 +128,9 @@ function AboutUsSignedIn() {
           <div className="footer-section">
             <h3>Support</h3>
             <ul className="footer-links">
-              <li><a href="#">Email: example@gmail.com</a></li>
-              <li><a href="#">Call: 0715 340 778</a></li>
+              {/* These are external links and should remain <a> tags with appropriate hrefs */}
+              <li><a href="mailto:example@gmail.com">Email: example@gmail.com</a></li>
+              <li><a href="tel:+254715340778">Call: 0715 340 778</a></li>
             </ul>
           </div>
         </div>

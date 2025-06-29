@@ -53,16 +53,16 @@ const ShoppingList = () => {
           </div>
           <nav>
             <ul className="nav-links">
-              <li><a href="/pages/HomePage_SignedIn.html">Home</a></li>
-              <li><a href="/pages/recipe-S.html">Recipes</a></li>
-              <li><a href="/pages/meal-planner.html">Meal Plans</a></li>
-              <li><a href="/pages/favourites.html">Favourites</a></li>
-              <li><a href="/pages/AboutUs-S.html">About</a></li>
+              <li><Link to ="/HomePage_SignedIn">Home</Link></li>
+              <li><Link to="/recipe-S">Recipes</Link></li>
+              <li><Link to="/meal-planner">Meal Plans</Link></li>
+              <li><Link to="/favourites">Favourites</Link></li>
+              <li><Link to="/AboutUs-S">About</Link></li>
             </ul>
           </nav>
           <div className="auth-buttons">
-            <a href="/pages/index.html" className="btn-signin">Log Out</a>
-            <a href="/pages/Profile.html" className="btn-started">Profile</a>
+            <Link to ="/index" className="btn-signin">Log Out</Link>
+            <Link to ="/Profile" className="btn-started">Profile</Link>
           </div>
         </div>
       </header>
@@ -121,7 +121,7 @@ const ShoppingList = () => {
         </div>
 
         <div>
-          <a href="/pages/meal-planner.html" className="back-button">Back to Meal Planner</a>
+          <Link to="/meal-planner" className="back-button">Back to Meal Planner</Link>
         </div>
       </main>
 

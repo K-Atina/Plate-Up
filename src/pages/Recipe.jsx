@@ -37,14 +37,14 @@ const Recipes = () => {
                     </div>
                     <nav>
                         <ul className="nav-links">
-                            <li><a href="/pages/index.html">Home</a></li>
-                            <li><a href="#" className="active">Recipes</a></li>
-                            <li><a href="/pages/AboutUs.html">About</a></li>
+                            <li><Link to="/index">Home</Link></li>
+                            <li><Link to="#" className="active">Recipes</Link></li>
+                            <li><Link to="/AboutUs">About</Link></li>
                         </ul>
                     </nav>
                     <div className="auth-buttons">
-                        <a href="/pages/signin.html" className="btn-signin">Sign In</a>
-                        <a href="/pages/Sign-up.html" className="btn-started">Get Started</a>
+                        <Link to ="/signin" className="btn-signin">Sign In</Link>
+                        <Link to ="/pages/Sign-up.html" className="btn-started">Get Started</Link>
                     </div>
                 </div>
             </header>
@@ -116,15 +116,15 @@ const Recipes = () => {
                     <div className="footer-section">
                         <h3>Features</h3>
                         <ul className="footer-links">
-                            <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/recipe.html">
+                            <Link to style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/recipe.html">
                                 <p>Recipe Search</p>
-                            </a>
-                            <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/signin.html">
+                            </Link>
+                            <Link to style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/signin.html">
                                 <p>Meal Planning</p>
-                            </a>
-                            <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/signin.html">
+                            </Link>
+                            <Link to style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/signin.html">
                                 <p>Shopping Lists</p>
-                            </a>
+                            </Link>
                         </ul>
                     </div>
                     <div className="footer-section">

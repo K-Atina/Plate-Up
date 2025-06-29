@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/HomePage.css'; // Ensure you have the correct path to your CSS file
+import { Link } from 'react-router-dom';
 
 
 const HomePage = () => {
@@ -9,19 +10,25 @@ const HomePage = () => {
       <header className="header">
         <div className="nav-container">
           <div className="logo">
-            <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
-            PLATE UP
+            {/* Logo linking to the public home page */}
+            <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
+              PLATE UP
+            </Link>
           </div>
           <nav>
             <ul className="nav-links">
-              <li><a href="/pages/index.html" className="active">Home</a></li>
-              <li><a href="/pages/recipe.html">Recipes</a></li>
-              <li><a href="/pages/AboutUs.html">About</a></li>
+              {/* Home link, active on this page */}
+              <li><Link to ="/" className="active">Home</Link></li> {/* Changed from /index */}
+              {/* Recipes link */}
+              <li><Link to="/recipes">Recipes</Link></li> {/* Changed from /recipe */}
+              {/* About link */}
+              <li><Link to="/about">About</Link></li> {/* Changed from /AboutUs */}
             </ul>
           </nav>
           <div className="auth-buttons">
-            <a href="/pages/signin.html" className="btn-signin">Sign In</a>
-            <a href="/pages/Sign-up.html" className="btn-started">Get Started</a>
+            <Link to="/signin" className="btn-signin">Sign In</Link>
+            <Link to="/signup" className="btn-started">Get Started</Link> {/* Changed from /Sign-up */}
           </div>
         </div>
       </header>
@@ -33,9 +40,10 @@ const HomePage = () => {
         <p>Easily create personalized meal plans, smart shopping lists, and nutritious recipes—all in one seamless process.</p>
         <div className="hero-actions">
           <input type="email" placeholder="Enter your email to get started" />
-          <a style={{margin: '0', padding: '0'}} href="/pages/Sign-up.html">
+          {/* Start Planning button linking to signup */}
+          <Link to="/signup" style={{margin: '0', padding: '0', display: 'inline-block'}}> {/* Added inline-block for Link styling */}
             <button style={{height: '100%', fontSize: '16px'}} className="btn-getstarted">Start Planning</button>
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -105,7 +113,7 @@ const HomePage = () => {
           </div>
           <div className="card">
             <div className="step-number">2</div>
-            <h4>Get Your Plan</h4>
+            <h4 >Get Your Plan</h4>
             <p>Receive a personalized weekly meal plan with recipes and nutrition info.</p>
           </div>
           <div className="card">
@@ -121,8 +129,11 @@ const HomePage = () => {
         <div className="footer-container">
           <div>
             <div className="footer-brand">
-              <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
-              PLATE UP
+              {/* Footer logo linking to public home page */}
+              <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
+                PLATE UP
+              </Link>
             </div>
             <p className="footer-description">
               Simplify your healthy eating through personalized meal planning, nutritious recipe discovery, and organized shopping lists.
@@ -131,22 +142,32 @@ const HomePage = () => {
           <div className="footer-section">
             <h3>Features</h3>
             <ul className="footer-links">
-              <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/recipe.html">
-                <p>Recipe Search</p>
-              </a>
-              <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/signin.html">
-                <p>Meal Planning</p>
-              </a>
-              <a style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/signin.html">
-                <p>Shopping Lists</p>
-              </a>
+              {/* Recipe Search linking to public recipes */}
+              <li>
+                <Link to="/recipes" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                  Recipe Search
+                </Link>
+              </li>
+              {/* Meal Planning for public users leads to signin */}
+              <li>
+                <Link to="/signin" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                  Meal Planning
+                </Link>
+              </li>
+              {/* Shopping Lists for public users leads to signin */}
+              <li>
+                <Link to="/signin" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                  Shopping Lists
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="footer-section">
             <h3>Support</h3>
             <ul className="footer-links">
-              <li><a href="#">Email: example@gmail.com</a></li>
-              <li><a href="#">Call: 0715 340 778</a></li>
+              {/* External links should remain <a> tags with proper hrefs */}
+              <li><a href="mailto:example@gmail.com">Email: example@gmail.com</a></li>
+              <li><a href="tel:0715340778">Call: 0715 340 778</a></li>
             </ul>
           </div>
         </div>
