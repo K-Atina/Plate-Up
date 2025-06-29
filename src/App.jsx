@@ -5,7 +5,7 @@ import './index.css'; // Import your common styles globally
 // Import your page components (will create these below)
 import HomePage from './pages/HomePage';
 import HomePageSignedIn from './pages/HomePageSignedIn';
-import AboutUs from './pages/AboutUs';
+import AboutUs from './pages/AboutUs'; //Not done yet
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Quiz from './pages/Quiz';
