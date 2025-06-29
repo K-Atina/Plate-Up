@@ -1,23 +1,8 @@
 import React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import './index.css'; // Import your common styles globally
-
-// Import your page components (will create these below)
 import HomePage from './pages/HomePage';
-import HomePageSignedIn from './pages/HomePageSignedIn';
-import AboutUs from './pages/AboutUs'; //Not done yet
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import Quiz from './pages/Quiz';
-import Recipes from './pages/Recipes';
-import RecipesSignedIn from './pages/Recipe_S';
-import MealPlanner from './pages/MealPlanner';
-import Favourites from './pages/Favourites';
-import Profile from './pages/Profile';
-import RecipeView from './pages/RecipeView';
-import ShoppingList from './pages/ShoppingList';
-
-
+import AboutUs from './pages/AboutUs';  
 function App() {
   return (
     <>
