@@ -6,7 +6,6 @@ import './index.css'; // Import your common styles globally
 import HomePage from './pages/HomePage';
 import HomePageSignedIn from './pages/HomePageSignedIn';
 import AboutUs from './pages/AboutUs';
-import AboutUsSignedIn from './pages/AboutUsSignedIn';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Quiz from './pages/Quiz';
