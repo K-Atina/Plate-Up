@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const FavouritesPage = () => {
+const Favourites = () => {
   const [favourites, setFavourites] = useState([]);
   const [stats, setStats] = useState({
     totalFavourites: 15,
@@ -242,4 +242,4 @@ const FavouritesPage = () => {
   );
 };
 
-export default FavouritesPage;
+export default Favourites;

@@ -10,12 +10,11 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Quiz from './pages/Quiz';
 import Recipes from './pages/Recipes';
-import RecipesSignedIn from './pages/RecipesSignedIn';
+import RecipesSignedIn from './pages/Recipe_S';
 import MealPlanner from './pages/MealPlanner';
 import Favourites from './pages/Favourites';
 import Profile from './pages/Profile';
 import RecipeView from './pages/RecipeView';
-import RecipeViewSignedIn from './pages/RecipeViewSignedIn';
 import ShoppingList from './pages/ShoppingList';
 
 
