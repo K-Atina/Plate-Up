@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/AboutUs.css'; // Import your styles for this page
+import '../styles/AboutUs.css'; 
 
 const AboutUs = () => {
   const values = [

@@ -1,6 +1,7 @@
 import React from 'react';
-import '..styles/HomePage.css'; // Ensure you have the correct path to your CSS file
-import '../styles/Global.css'; // Import global styles if needed
+import '../styles/HomePage.css'; // Ensure you have the correct path to your CSS file
+
+
 const HomePage = () => {
   return (
     <div>
