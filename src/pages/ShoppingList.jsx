@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './shoppinglist.css';
+import '../styles/ShoppingList.css'; // Import your specific styles for the Shopping List page
 
 const ShoppingList = () => {
   const [ingredients, setIngredients] = useState([
