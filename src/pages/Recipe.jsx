@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Recipe.css'; // Ensure you have the correct path to your CSS file
+import '../styles/Recipe.css';
+import { Link } from 'react-router-dom';
 
 const Recipes = () => {
     const [searchInput, setSearchInput] = useState('');
     const [dietFilter, setDietFilter] = useState('');
     const [recipes, setRecipes] = useState([]);
 
-    // You can replace this with your actual recipe data or API call
+    //replace this with your actual recipe data or API call
     useEffect(() => {
-        // This is where you would typically load your recipes
-        // For now, it's empty but the structure is ready
+        
         setRecipes([]);
     }, []);
 
