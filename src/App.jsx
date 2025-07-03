@@ -27,8 +27,8 @@ const App = () => {
             </ul>
           </nav>
           <div className="auth-buttons">
-            <Link to="/signin" className="btn-signin">Sign In</Link>
-            <Link to="/signup" className="btn-started">Get Started</Link> {/* Changed from /Sign-up */}
+            <Link to="/Sign-In" className="btn-signin">Sign In</Link>
+            <Link to="/Sign-Up" className="btn-started">Get Started</Link> {/* Changed from /Sign-up */}
           </div>
         </div>
       </header>
