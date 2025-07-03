@@ -1,54 +1,10 @@
 
 import React, { useState } from 'react';
-import '../styles/SignUp.css'; // Ensure you have the correct path to your CSS file
+import '../styles/SignUp.css'; 
+
+
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Navigate to quiz page - in a real app, you'd use React Router
-    window.location.href = '/pages/quiz.html';
-  };
-
-  const signInWithGoogle = () => {
-    // Handle Google sign in
-    console.log('Google sign in clicked');
-  };
-
-  const signInWithMicrosoft = () => {
-    // Handle Microsoft sign in
-    console.log('Microsoft sign in clicked');
-  };
-
-  const signInWithApple = () => {
-    // Handle Apple sign in
-    console.log('Apple sign in clicked');
-  };
-
-  const showSignIn = () => {
-    // Navigate to sign in page
-    window.location.href = '/pages/signin.html';
-  };
-
-  const goHome = () => {
-    // Navigate to home page
-    window.location.href = '/pages/index.html';
-  };
 
   return (
     <div className="container">
