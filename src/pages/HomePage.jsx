@@ -18,16 +18,16 @@ const HomePage = () => {
           </div>
           <nav>
             <ul className="nav-links">
-              <li><Link to="/" className="active">Home</Link></li>
-              <li><Link to="/recipes">Recipes</Link></li>
-              <li><Link to="/meal-planner">Meal Plans</Link></li>
-              <li><Link to="/favourites">Favourites</Link></li>
-              <li><Link to="/about">About</Link></li>
+              <li><Link to="Home" className="active">Home</Link></li>
+              <li><Link to="/My-Recipes">Recipes</Link></li>
+              <li><Link to="/Meal-Planner">Meal Plans</Link></li>
+              <li><Link to="/Favourites">Favourites</Link></li>
+              <li><Link to="/About-Us-User">About</Link></li>
             </ul>
           </nav>
           <div className="auth-buttons">
-            <Link to="/logout" className="btn-signin">Log Out</Link>
-            <Link to="/profile" className="btn-started">Profile</Link>
+            <Link to="/" className="btn-signin">Log Out</Link>
+            <Link to="/Profile" className="btn-started">Profile</Link>
           </div>
         </div>
       </header>
@@ -41,7 +41,7 @@ const HomePage = () => {
           nutritious recipes—all in one seamless process.
         </p>
         <div className="hero-actions">
-          <Link to="/meal-planner" style={{ margin: 0, padding: 0 }}>
+          <Link to="/Meal-Planner" style={{ margin: 0, padding: 0 }}>
             <button
               className="btn-getstarted"
               style={{ height: "42px", fontSize: "16px" }}
@@ -170,7 +170,7 @@ const HomePage = () => {
             <ul className="footer-links">
               <li>
                 <Link
-                  to="/recipes"
+                  to="/Recipes"
                   style={{ textDecoration: "none", color: "#a0aec0" }}
                 >
                   Recipe Search
@@ -178,7 +178,7 @@ const HomePage = () => {
               </li>
               <li>
                 <Link
-                  to="/meal-planner"
+                  to="/Meal-Planner"
                   style={{ textDecoration: "none", color: "#a0aec0" }}
                 >
                   Meal Planning
@@ -186,7 +186,7 @@ const HomePage = () => {
               </li>
               <li>
                 <Link
-                  to="/shoppinglist"
+                  to="/Shopping-List"
                   style={{ textDecoration: "none", color: "#a0aec0" }}
                 >
                   Shopping Lists
