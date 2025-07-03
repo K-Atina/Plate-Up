@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import '../styles/ShoppingList.css'; // Import your specific styles for the Shopping List page
+import '../styles/ShoppingList.css';
+import { Link } from 'react-router-dom';
 
 const ShoppingList = () => {
   const [ingredients, setIngredients] = useState([

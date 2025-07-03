@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/SignIn.css'; // Ensure you have the correct path to your CSS file
+import { Link } from 'react-router-dom';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');

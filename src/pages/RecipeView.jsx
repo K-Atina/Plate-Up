@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/RecipeView.css'; // Import your CSS styles for this component
+import { Link } from 'react-router-dom';
 
 const RecipeView = () => {
   const [currentServings, setCurrentServings] = useState(4);

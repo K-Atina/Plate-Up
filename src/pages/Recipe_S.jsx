@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Recipe.css';
+import { Link } from 'react-router-dom';
 
 const Recipe_S = () => {
     const [searchInput, setSearchInput] = useState('');

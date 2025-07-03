@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
-import '../styles/MealPlanner.css'; // Import your CSS styles for Meal Planner
+import { Link, useNavigate } from 'react-router-dom'; 
+import '../styles/MealPlanner.css'; 
 
 const MealPlanner = () => {
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate(); 
 
     const [mealPlans, setMealPlans] = useState({
         monday: {
