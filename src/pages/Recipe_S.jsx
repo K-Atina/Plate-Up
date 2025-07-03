@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Recipe.css';
 import { Link } from 'react-router-dom';
 
-const Recipe_S = () => {
+const Recipes_S = () => {
     const [searchInput, setSearchInput] = useState('');
     const [dietFilter, setDietFilter] = useState('');
     const [recipes, setRecipes] = useState([]);
@@ -146,4 +146,4 @@ const Recipe_S = () => {
     );
 };
 
-export default Recipe_S;
+export default Recipes_S;

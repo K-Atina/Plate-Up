@@ -9,7 +9,7 @@ function AboutUsSignedIn() {
       <header className="header">
         <div className="nav-container">
           <div className="logo">
-            <Link to="/home-signed-in" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Link to="/Home" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <img
                 src="/icons/Logo.png"
                 alt="Logo"
@@ -21,17 +21,16 @@ function AboutUsSignedIn() {
           </div>
           <nav>
             <ul className="nav-links">
-              <li><Link to="/home-signed-in">Home</Link></li>
-              <li><Link to="/recipes-signed-in">Recipes</Link></li>
-              <li><Link to="/meal-planner">Meal Plans</Link></li>
-              <li><Link to="/favourites">Favourites</Link></li>
-              {/* Corrected 'About' link to point to the signed-in about page and keep active class */}
-              <li><Link to="/about-signed-in" className="active">About</Link></li>
+              <li><Link to="/Home">Home</Link></li>
+              <li><Link to="/All-Recipes">Recipes</Link></li>
+              <li><Link to="/Meal-Planner">Meal Plans</Link></li>
+              <li><Link to="/Favourites">Favourites</Link></li>
+              <li><Link to="/About-Us-User" className="active">About</Link></li>
             </ul>
           </nav>
           <div className="auth-buttons">
             <Link to="/" className="btn-signin">Log Out</Link>
-            <Link to="/profile" className="btn-started">Profile</Link>
+            <Link to="/Profile" className="btn-started">Profile</Link>
           </div>
         </div>
       </header>
@@ -92,7 +91,7 @@ function AboutUsSignedIn() {
           <p>
             Whether you’re new to meal prepping or a seasoned home chef, <span className="brand">Plate Up</span> is here to help you take the guesswork out of healthy eating. Start your journey today and discover how delicious balance can be.
           </p>
-          <Link to="/signup">
+          <Link to="/Sign-Up">
             <button className="btn btn-getstarted">Get Started Today</button>
           </Link>
         </div>
@@ -103,7 +102,7 @@ function AboutUsSignedIn() {
         <div className="footer-container">
           <div>
             <div className="footer-brand">
-              <Link to="/home-signed-in" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <Link to="/Home" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <img
                   src="/icons/Logo.png"
                   alt="Logo"
@@ -120,9 +119,9 @@ function AboutUsSignedIn() {
           <div className="footer-section">
             <h3>Features</h3>
             <ul className="footer-links">
-              <li><Link to="/recipes-signed-in" style={{ textDecoration: "none", color: "#a0aec0" }}>Recipe Search</Link></li>
-              <li><Link to="/meal-planner" style={{ textDecoration: "none", color: "#a0aec0" }}>Meal Planning</Link></li>
-              <li><Link to="/shopping-list" style={{ textDecoration: "none", color: "#a0aec0" }}>Shopping Lists</Link></li>
+              <li><Link to="/All-Recipes" style={{ textDecoration: "none", color: "#a0aec0" }}>Recipe Search</Link></li>
+              <li><Link to="/Meal-Planner" style={{ textDecoration: "none", color: "#a0aec0" }}>Meal Planning</Link></li>
+              <li><Link to="/Shopping-list" style={{ textDecoration: "none", color: "#a0aec0" }}>Shopping Lists</Link></li>
             </ul>
           </div>
           <div className="footer-section">

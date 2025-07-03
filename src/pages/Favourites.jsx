@@ -12,7 +12,6 @@ const Favourites = () => {
 
   // Mock data for demonstration - replace with actual data loading logic
   useEffect(() => {
-    // This would typically load from localStorage, API, or props
     const mockFavourites = [
       {
         id: 1,
@@ -43,7 +42,6 @@ const Favourites = () => {
     setFavourites(mockFavourites);
   }, []);
 
-  // Removed goRecipes, handleLogout, handleProfile as Link components will handle navigation
 
   const removeFavourite = (recipeId) => {
     setFavourites(prev => prev.filter(recipe => recipe.id !== recipeId));
@@ -62,7 +60,7 @@ const Favourites = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               {/* Logo linking to signed-in home page */}
-              <Link to="/home-signed-in" className="flex items-center space-x-2 text-gray-900 no-underline">
+              <Link to="/Home" className="flex items-center space-x-2 text-gray-900 no-underline">
                 <img 
                   src="/icons/Logo.png" 
                   alt="Logo" 
@@ -73,12 +71,11 @@ const Favourites = () => {
             </div>
             
             <nav className="hidden md:flex space-x-8">
-              <Link to="/home-signed-in" className="text-gray-600 hover:text-gray-900 px-3 py-2">Home</Link>
-              <Link to="/recipes-signed-in" className="text-gray-600 hover:text-gray-900 px-3 py-2">Recipes</Link>
-              <Link to="/meal-planner" className="text-gray-600 hover:text-gray-900 px-3 py-2">Meal Plans</Link>
-              {/* Favourites is the current page, set active styling */}
-              <Link to="/favourites" className="text-orange-600 font-medium px-3 py-2">Favourites</Link>
-              <Link to="/about-signed-in" className="text-gray-600 hover:text-gray-900 px-3 py-2">About</Link>
+              <Link to="/Home" className="text-gray-600 hover:text-gray-900 px-3 py-2">Home</Link>
+              <Link to="/All-Recipes" className="text-gray-600 hover:text-gray-900 px-3 py-2">Recipes</Link>
+              <Link to="/Meal-Planner" className="text-gray-600 hover:text-gray-900 px-3 py-2">Meal Plans</Link>
+              <Link to="/Favourites" className="text-orange-600 font-medium px-3 py-2">Favourites</Link>
+              <Link to="/About-Us-User" className="text-gray-600 hover:text-gray-900 px-3 py-2">About</Link>
             </nav>
             
             <div className="flex items-center space-x-3">

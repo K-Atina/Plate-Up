@@ -18,12 +18,12 @@ const App = () => {
           </div>
           <nav>
             <ul className="nav-links">
-              {/* Home link, active on this page */}
-              <li><Link to ="/" className="active">Home</Link></li> {/* Changed from /index */}
+              {/* Link to Home. It is active on this page */}
+              <li><Link to ="/" className="active">Home</Link></li>
               {/* Recipes link */}
-              <li><Link to="/recipes">Recipes</Link></li> {/* Changed from /recipe */}
-              {/* About link */}
-              <li><Link to="/about">About</Link></li> {/* Changed from /AboutUs */}
+              <li><Link to="/Recipes">Recipes</Link></li>
+              {/* About link when signed out */}
+              <li><Link to="/About-Us">About</Link></li>
             </ul>
           </nav>
           <div className="auth-buttons">
@@ -41,7 +41,7 @@ const App = () => {
         <div className="hero-actions">
           <input type="email" placeholder="Enter your email to get started" />
           {/* Start Planning button linking to signup */}
-          <Link to="/signup" style={{margin: '0', padding: '0', display: 'inline-block'}}> {/* Added inline-block for Link styling */}
+          <Link to="/Sign-Up" style={{margin: '0', padding: '0', display: 'inline-block'}}> {/* Added inline-block for Link styling */}
             <button style={{height: '100%', fontSize: '16px'}} className="btn-getstarted">Start Planning</button>
           </Link>
         </div>
@@ -70,7 +70,7 @@ const App = () => {
             <p>Generate organized shopping lists from your meal plans</p>
           </div>
           <div className="card">
-            <img src="/icons/black heart.png" alt="Heart Icon" className="feature-icon" />
+            <img src="/icons/black-heart.png" alt="Heart Icon" className="feature-icon" />
             <h4 style={{color: '#28e28b'}}>Favorite Recipes</h4>
             <p>Save and organize your favorite healthy recipes</p>
           </div>
@@ -144,19 +144,19 @@ const App = () => {
             <ul className="footer-links">
               {/* Recipe Search linking to public recipes */}
               <li>
-                <Link to="/recipes" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                <Link to="/Recipes" style={{textDecoration: 'none', color: '#a0aec0'}}>
                   Recipe Search
                 </Link>
               </li>
               {/* Meal Planning for public users leads to signin */}
               <li>
-                <Link to="/signin" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                <Link to="/Sign-In" style={{textDecoration: 'none', color: '#a0aec0'}}>
                   Meal Planning
                 </Link>
               </li>
               {/* Shopping Lists for public users leads to signin */}
               <li>
-                <Link to="/signin" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                <Link to="/Sign-In" style={{textDecoration: 'none', color: '#a0aec0'}}>
                   Shopping Lists
                 </Link>
               </li>

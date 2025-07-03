@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link } from 'react-router-dom';
 import '../styles/AboutUs.css'; 
 
 const AboutUs = () => {
@@ -27,15 +27,13 @@ const AboutUs = () => {
     },
     {
       id: 4,
-      icon: '/icons/black heart.png',
+      icon: '/icons/black-heart.png',
       title: 'Support',
       description: 'Enjoy a supportive community and expert guidance every step of the way.',
       className: 'value-icon'
     }
   ];
 
-  // The handleGetStarted function and its onClick call on the button are no longer needed
-  // because the <Link> component will handle the navigation directly.
 
   return (
     <div>
@@ -52,16 +50,16 @@ const AboutUs = () => {
           <nav>
             <ul className="nav-links">
               {/* Home link */}
-              <li><Link to="/">Home</Link></li> {/* Changed from /index */}
+              <li><Link to="/">Home</Link></li> 
               {/* Recipes link */}
-              <li><Link to="/recipes">Recipes</Link></li> {/* Changed from /recipe */}
+              <li><Link to="/Recipes">Recipes</Link></li> 
               {/* About link should be active on this page */}
-              <li><Link to="/about" className="active">About</Link></li> {/* Changed from # to /about */}
+              <li><Link to="/About-Us" className="active">About</Link></li> 
             </ul>
           </nav>
           <div className="auth-buttons">
-            <Link to="/signin" className="btn-signin">Sign In</Link>
-            <Link to="/signup" className="btn-started">Get Started</Link> {/* Changed from Sign-up to /signup */}
+            <Link to="/Sign-In" className="btn-signin">Sign In</Link>
+            <Link to="/Sign-Up" className="btn-started">Get Started</Link> {/* Changed from Sign-up to /signup */}
           </div>
         </div>
       </header>
@@ -142,19 +140,19 @@ const AboutUs = () => {
             <ul className="footer-links">
               {/* Changed to Link with correct 'to' prop and proper list item structure */}
               <li>
-                <Link to="/recipes" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                <Link to="/Recipes" style={{textDecoration: 'none', color: '#a0aec0'}}>
                   Recipe Search
                 </Link>
               </li>
               <li>
                 {/* Meal Planning for public users leads to signin */}
-                <Link to="/signin" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                <Link to="/Sign-In" style={{textDecoration: 'none', color: '#a0aec0'}}>
                   Meal Planning
                 </Link>
               </li>
               <li>
                 {/* Shopping Lists for public users leads to signin */}
-                <Link to="/signin" style={{textDecoration: 'none', color: '#a0aec0'}}>
+                <Link to="/Sign-In" style={{textDecoration: 'none', color: '#a0aec0'}}>
                   Shopping Lists
                 </Link>
               </li>

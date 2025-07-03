@@ -11,7 +11,7 @@ import HomePage from './pages/HomePage';
 import MealPlanner from './pages/MealPlanner';
 import Profile from './pages/Profile';
 import Quiz from './pages/Quiz';
-import Recipe_S from './pages/Recipe_S';
+import Recipes_S from './pages/Recipe_S';
 import Recipes from './pages/Recipe';
 import RecipeView from './pages/RecipeView';
 import ShoppingList from './pages/ShoppingList';
@@ -30,7 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Route path="/Meal-Planner" element={<MealPlanner />} />
       <Route path="/Profile" element={<Profile />} />
       <Route path="/Quiz" element={<Quiz />} />
-      <Route path="/All-Recipes" element={<Recipe_S />} />
+      <Route path="/All-Recipes" element={<Recipes_S />} />
       <Route path="/Recipes" element={<Recipes />} />
       <Route path="/My-Recipes" element={<RecipeView />} />
       <Route path="/Shopping-List" element={<ShoppingList />} />
