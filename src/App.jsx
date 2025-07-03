@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/HomePage.css'; // Ensure you have the correct path to your CSS file
+import './App.css';
 import { Link } from 'react-router-dom';
 
 
@@ -165,7 +165,6 @@ const App = () => {
           <div className="footer-section">
             <h3>Support</h3>
             <ul className="footer-links">
-              {/* External links should remain <a> tags with proper hrefs */}
               <li><a href="mailto:example@gmail.com">Email: example@gmail.com</a></li>
               <li><a href="tel:0715340778">Call: 0715 340 778</a></li>
             </ul>
