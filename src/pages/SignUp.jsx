@@ -1,134 +1,668 @@
-
-import React, { useState } from 'react';
-import '../styles/SignUp.css'; 
-
-
+import React, { useState, useEffect } from "react";
 
 const SignUp = () => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [strengthClass, setStrengthClass] = useState("");
+
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes floatUp {
+        to {
+          transform: translateY(-100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          box-shadow: 0 4px 20px rgba(65, 236, 194, 0.4);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 6px 30px rgba(65, 236, 194, 0.6);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    const createParticle = () => {
+      const particle = document.createElement("div");
+      particle.style.cssText = `
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
+        left: ${Math.random() * 100}vw;
+        top: 100%;
+        animation: floatUp ${3 + Math.random() * 4}s linear forwards;
+      `;
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 7000);
+    };
+
+    const interval = setInterval(createParticle, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const calculatePasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+    switch (strength) {
+      case 1:
+      case 2:
+        return "weak";
+      case 3:
+        return "fair";
+      case 4:
+        return "good";
+      case 5:
+        return "strong";
+      default:
+        return "";
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (name === "password") {
+      setStrengthClass(calculatePasswordStrength(value));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { password, confirmPassword } = formData;
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    alert("Account created successfully! 🎉");
+  };
+
+  const simulateAuthAction = (provider) => {
+    alert(`Redirecting to ${provider} authentication...`);
+  };
+
+  const getStrengthColor = (strength) => {
+    switch (strength) {
+      case "weak": return "#ff4757";
+      case "fair": return "#ffa502";
+      case "good": return "#2ed573";
+      case "strong": return "#5b86e5";
+      default: return "transparent";
+    }
+  };
+
+  const getStrengthWidth = (strength) => {
+    switch (strength) {
+      case "weak": return "25%";
+      case "fair": return "50%";
+      case "good": return "75%";
+      case "strong": return "100%";
+      default: return "0%";
+    }
+  };
 
   return (
-    <div className="container">
-      <div className="logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
-        <div className="website-name" style={{ color: '#28e28b', fontWeight: '700', fontSize: '2.2rem' }}>
-          PLATE UP
-        </div>
-        <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{ height: '60px', width: '60px' }} />
-      </div>
-      
-      <h1>SIGN UP</h1>
-      
-      <div id="signupForm" onSubmit={handleSubmit}>
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="firstName">First Name</label>
-            <input 
-              type="text" 
-              id="firstName" 
-              name="firstName" 
-              placeholder="Enter your first name" 
-              value={formData.firstName}
-              onChange={handleInputChange}
-              required 
-            />
+    <div style={{
+      minHeight: "100vh",
+      background: "#9df0db",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+      position: "relative",
+      overflow: "hidden"
+    }}>
+      <div style={{
+        background: "white",
+        backdropFilter: "blur(20px)",
+        borderRadius: "24px",
+        padding: "40px",
+        width: "100%",
+        maxWidth: "480px",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2)",
+        border: "1px solid rgba(0, 0, 0, 0.2)",
+        position: "relative",
+        overflow: "hidden",
+        animation: "slideIn 0.8s ease-out",
+        zIndex: 2
+      }}>
+        {/* Shimmer effect */}
+        <div style={{
+          content: '""',
+          position: "absolute",
+          top: "-50%",
+          left: "-50%",
+          width: "200%",
+          height: "200%",
+          background: "linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent)",
+          transform: "rotate(45deg)",
+          animation: "shimmer 3s ease-in-out infinite",
+          pointerEvents: "none"
+        }}></div>
+
+        {/* Logo */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "8px",
+          textAlign: "center",
+          marginBottom: "30px",
+          position: "relative",
+          zIndex: 2
+        }}>
+          <div style={{
+            color: "#28e28b",
+            fontWeight: 700,
+            fontSize: "2.2rem"
+          }}>
+            PLATE UP
           </div>
-          <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
-            <input 
-              type="text" 
-              id="lastName" 
-              name="lastName" 
-              placeholder="Enter your last name" 
-              value={formData.lastName}
-              onChange={handleInputChange}
-              required 
-            />
+          <div style={{
+            width: "60px",
+            height: "60px",
+            background: "#39edc0",
+            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "30px",
+            animation: "pulse 2s ease-in-out infinite"
+          }}>
+            <img src='/Logo.png'/>
           </div>
         </div>
-        
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            placeholder="Enter your email" 
-            value={formData.email}
-            onChange={handleInputChange}
-            required 
-          />
-        </div>
-        
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              placeholder="Create password" 
-              value={formData.password}
-              onChange={handleInputChange}
-              required 
-            />
-            <div className="password-strength">
-              <div className="password-strength-bar" id="strengthBar"></div>
+
+        <h1 style={{
+          textAlign: "center",
+          color: "black",
+          fontSize: "32px",
+          fontWeight: 700,
+          marginBottom: "40px",
+          textShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
+          position: "relative",
+          zIndex: 2
+        }}>
+          SIGN UP
+        </h1>
+
+        <div onSubmit={handleSubmit}>
+          {/* Name Row */}
+          <div style={{ display: "flex", gap: "15px", marginBottom: "20px" }}>
+            <div style={{ flex: 1 }}>
+              <label style={{
+                display: "block",
+                color: "rgba(0, 0, 0, 0.9)",
+                fontSize: "14px",
+                fontWeight: 500,
+                marginBottom: "8px"
+              }}>
+                First Name
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                required
+                placeholder="Enter your first name"
+                onChange={handleChange}
+                style={{
+                  width: "100%",
+                  padding: "16px 20px",
+                  border: "2px solid rgba(0, 0, 0, 0.2)",
+                  borderRadius: "12px",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  color: "black",
+                  fontSize: "16px",
+                  transition: "all 0.3s ease",
+                  backdropFilter: "blur(10px)",
+                  outline: "none"
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#00d4ff";
+                  e.target.style.background = "rgba(255, 255, 255, 0.15)";
+                  e.target.style.boxShadow = "0 0 0 4px rgba(0, 212, 255, 0.2), 0 8px 25px rgba(0, 212, 255, 0.3)";
+                  e.target.style.transform = "translateY(-2px)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow = "none";
+                  e.target.style.transform = "translateY(0)";
+                }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{
+                display: "block",
+                color: "rgba(0, 0, 0, 0.9)",
+                fontSize: "14px",
+                fontWeight: 500,
+                marginBottom: "8px"
+              }}>
+                Last Name
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                required
+                placeholder="Enter your last name"
+                onChange={handleChange}
+                style={{
+                  width: "100%",
+                  padding: "16px 20px",
+                  border: "2px solid rgba(0, 0, 0, 0.2)",
+                  borderRadius: "12px",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  color: "black",
+                  fontSize: "16px",
+                  transition: "all 0.3s ease",
+                  backdropFilter: "blur(10px)",
+                  outline: "none"
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#00d4ff";
+                  e.target.style.background = "rgba(255, 255, 255, 0.15)";
+                  e.target.style.boxShadow = "0 0 0 4px rgba(0, 212, 255, 0.2), 0 8px 25px rgba(0, 212, 255, 0.3)";
+                  e.target.style.transform = "translateY(-2px)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow = "none";
+                  e.target.style.transform = "translateY(0)";
+                }}
+              />
             </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input 
-              type="password" 
-              id="confirmPassword" 
-              name="confirmPassword" 
-              placeholder="Confirm your password" 
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required 
+
+          {/* Email */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{
+              display: "block",
+              color: "rgba(0, 0, 0, 0.9)",
+              fontSize: "14px",
+              fontWeight: 500,
+              marginBottom: "8px"
+            }}>
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="Enter your email"
+              onChange={handleChange}
+              style={{
+                width: "100%",
+                padding: "16px 20px",
+                border: "2px solid rgba(0, 0, 0, 0.2)",
+                borderRadius: "12px",
+                background: "rgba(255, 255, 255, 0.1)",
+                color: "black",
+                fontSize: "16px",
+                transition: "all 0.3s ease",
+                backdropFilter: "blur(10px)",
+                outline: "none"
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#00d4ff";
+                e.target.style.background = "rgba(255, 255, 255, 0.15)";
+                e.target.style.boxShadow = "0 0 0 4px rgba(0, 212, 255, 0.2), 0 8px 25px rgba(0, 212, 255, 0.3)";
+                e.target.style.transform = "translateY(-2px)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                e.target.style.boxShadow = "none";
+                e.target.style.transform = "translateY(0)";
+              }}
             />
           </div>
+
+          {/* Password Row */}
+          <div style={{ display: "flex", gap: "15px", marginBottom: "20px" }}>
+            <div style={{ flex: 1 }}>
+              <label style={{
+                display: "block",
+                color: "rgba(0, 0, 0, 0.9)",
+                fontSize: "14px",
+                fontWeight: 500,
+                marginBottom: "8px"
+              }}>
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                required
+                placeholder="Create password"
+                onChange={handleChange}
+                style={{
+                  width: "100%",
+                  padding: "16px 20px",
+                  border: "2px solid rgba(0, 0, 0, 0.2)",
+                  borderRadius: "12px",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  color: "black",
+                  fontSize: "16px",
+                  transition: "all 0.3s ease",
+                  backdropFilter: "blur(10px)",
+                  outline: "none"
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#00d4ff";
+                  e.target.style.background = "rgba(255, 255, 255, 0.15)";
+                  e.target.style.boxShadow = "0 0 0 4px rgba(0, 212, 255, 0.2), 0 8px 25px rgba(0, 212, 255, 0.3)";
+                  e.target.style.transform = "translateY(-2px)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow = "none";
+                  e.target.style.transform = "translateY(0)";
+                }}
+              />
+              <div style={{
+                height: "4px",
+                background: "rgba(0, 0, 0, 0.2)",
+                borderRadius: "2px",
+                marginTop: "8px",
+                overflow: "hidden",
+                position: "relative"
+              }}>
+                <div style={{
+                  height: "100%",
+                  width: getStrengthWidth(strengthClass),
+                  background: getStrengthColor(strengthClass),
+                  borderRadius: "2px",
+                  transition: "all 0.3s ease"
+                }}></div>
+              </div>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{
+                display: "block",
+                color: "rgba(0, 0, 0, 0.9)",
+                fontSize: "14px",
+                fontWeight: 500,
+                marginBottom: "8px"
+              }}>
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                required
+                placeholder="Confirm your password"
+                onChange={handleChange}
+                style={{
+                  width: "100%",
+                  padding: "16px 20px",
+                  border: "2px solid rgba(0, 0, 0, 0.2)",
+                  borderRadius: "12px",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  color: "black",
+                  fontSize: "16px",
+                  transition: "all 0.3s ease",
+                  backdropFilter: "blur(10px)",
+                  outline: "none"
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#00d4ff";
+                  e.target.style.background = "rgba(255, 255, 255, 0.15)";
+                  e.target.style.boxShadow = "0 0 0 4px rgba(0, 212, 255, 0.2), 0 8px 25px rgba(0, 212, 255, 0.3)";
+                  e.target.style.transform = "translateY(-2px)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.target.style.boxShadow = "none";
+                  e.target.style.transform = "translateY(0)";
+                }}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              padding: "16px",
+              border: "none",
+              borderRadius: "12px",
+              fontSize: "16px",
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              marginBottom: "15px",
+              position: "relative",
+              overflow: "hidden",
+              zIndex: 2,
+              background: "#41ecc2",
+              color: "black",
+              boxShadow: "0 4px 15px rgba(65, 236, 194, 0.4)"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-2px)";
+              e.target.style.boxShadow = "0 8px 25px rgba(65, 236, 194, 0.6)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "0 4px 15px rgba(65, 236, 194, 0.4)";
+            }}
+          >
+            Create Account
+          </button>
         </div>
-        
-        <button type="button" className="btn btn-primary" onClick={handleSubmit}>Create Account</button>
-      </div>
-      
-      <div className="social-buttons">
-        <button className="social-btn google-btn" onClick={signInWithGoogle}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-            <svg viewBox="0 0 24 24" style={{ width: '18px', height: '18px' }}>
-              <path fill="#ea4335" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-              <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            <span style={{ fontSize: '10px', fontWeight: '600' }}>Google</span>
-          </div>
-        </button>
-        
-        <button className="social-btn microsoft-btn" onClick={signInWithMicrosoft}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-            <svg viewBox="0 0 24 24" style={{ width: '18px', height: '18px' }}>
-              <path fill="#f25022" d="M0 0h11v11H0z"/>
-              <path fill="#00a4ef" d="M13 0h11v11H13z"/>
-              <path fill="#7fba00" d="M0 13h11v11H0z"/>
-              <path fill="#ffb900" d="M13 13h11v11H13z"/>
-            </svg>
-            <span style={{ fontSize: '10px', fontWeight: '600' }}>Microsoft</span>
-          </div>
-        </button>
-        
-        <button className="social-btn apple-btn" onClick={signInWithApple}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-            <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '18px', height: '18px' }}>
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-            </svg>
-            <span style={{ fontSize: '10px', fontWeight: '600' }}>Apple</span>
-          </div>
-        </button>
-      </div>
-      
-      <div className="footer-links">
-        <p>Already have an account? <button onClick={showSignIn} style={{ background: 'none', border: 'none', color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}>Sign In</button></p>
-        <button onClick={goHome} style={{ background: 'none', border: 'none', color: 'inherit', textDecoration: 'underline', cursor: 'pointer' }}>Return to Home Page</button>
+
+        {/* Social Buttons */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          margin: "30px 0",
+          position: "relative",
+          zIndex: 2
+        }}>
+          <button
+            onClick={() => simulateAuthAction("Google")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "80px",
+              height: "80px",
+              borderRadius: "16px",
+              border: "2px solid rgba(234, 67, 53, 0.2)",
+              background: "rgba(234, 67, 53, 0.1)",
+              color: "#ea4335",
+              fontSize: "14px",
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-4px)";
+              e.target.style.background = "rgba(234, 67, 53, 0.15)";
+              e.target.style.borderColor = "#ea4335";
+              e.target.style.boxShadow = "0 8px 25px rgba(234, 67, 53, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.background = "rgba(234, 67, 53, 0.1)";
+              e.target.style.borderColor = "rgba(234, 67, 53, 0.2)";
+              e.target.style.boxShadow = "none";
+            }}
+          >
+            Google
+          </button>
+          <button
+            onClick={() => simulateAuthAction("Microsoft")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "80px",
+              height: "80px",
+              borderRadius: "16px",
+              border: "2px solid rgba(0, 164, 241, 0.2)",
+              background: "rgba(0, 164, 241, 0.1)",
+              color: "#00a4f1",
+              fontSize: "14px",
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-4px)";
+              e.target.style.background = "rgba(0, 164, 241, 0.15)";
+              e.target.style.borderColor = "#00a4f1";
+              e.target.style.boxShadow = "0 8px 25px rgba(0, 164, 241, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.background = "rgba(0, 164, 241, 0.1)";
+              e.target.style.borderColor = "rgba(0, 164, 241, 0.2)";
+              e.target.style.boxShadow = "none";
+            }}
+          >
+            Microsoft
+          </button>
+          <button
+            onClick={() => simulateAuthAction("Apple")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "80px",
+              height: "80px",
+              borderRadius: "16px",
+              border: "2px solid rgba(0, 0, 0, 0.2)",
+              background: "rgba(0, 0, 0, 0.1)",
+              color: "#000",
+              fontSize: "14px",
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "translateY(-4px)";
+              e.target.style.background = "rgba(0, 0, 0, 0.15)";
+              e.target.style.borderColor = "#000";
+              e.target.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "translateY(0)";
+              e.target.style.background = "rgba(0, 0, 0, 0.1)";
+              e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+              e.target.style.boxShadow = "none";
+            }}
+          >
+            Apple
+          </button>
+        </div>
+
+        {/* Footer Links */}
+        <div style={{
+          textAlign: "center",
+          marginTop: "30px",
+          position: "relative",
+          zIndex: 2
+        }}>
+          <p style={{
+            color: "rgba(0, 0, 0, 0.7)",
+            fontSize: "14px",
+            marginBottom: "10px"
+          }}>
+            Already have an account?{' '}
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                alert("Redirecting to Sign In page...");
+              }}
+              style={{
+                color: "rgba(0, 0, 0, 0.8)",
+                textDecoration: "none",
+                fontSize: "14px",
+                position: "relative"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = "#00d4ff";
+                e.target.style.textShadow = "0 0 10px rgba(0, 212, 255, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = "rgba(0, 0, 0, 0.8)";
+                e.target.style.textShadow = "none";
+              }}
+            >
+              Sign In
+            </a>
+          </p>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              alert("Returning to Home Page...");
+            }}
+            style={{
+              color: "rgba(0, 0, 0, 0.8)",
+              textDecoration: "none",
+              fontSize: "14px",
+              position: "relative"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.color = "#00d4ff";
+              e.target.style.textShadow = "0 0 10px rgba(0, 212, 255, 0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.color = "rgba(0, 0, 0, 0.8)";
+              e.target.style.textShadow = "none";
+            }}
+          >
+            Return to Home Page
+          </a>
+        </div>
       </div>
     </div>
   );
