@@ -11,44 +11,6 @@ const SignUp = () => {
   const [strengthClass, setStrengthClass] = useState("");
 
   useEffect(() => {
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes floatUp {
-        to {
-          transform: translateY(-100vh) rotate(360deg);
-          opacity: 0;
-        }
-      }
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(30px) scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-      @keyframes shimmer {
-        0% {
-          transform: translateX(-100%) translateY(-100%) rotate(45deg);
-        }
-        100% {
-          transform: translateX(100%) translateY(100%) rotate(45deg);
-        }
-      }
-      @keyframes pulse {
-        0%, 100% {
-          transform: scale(1);
-          box-shadow: 0 4px 20px rgba(65, 236, 194, 0.4);
-        }
-        50% {
-          transform: scale(1.05);
-          box-shadow: 0 6px 30px rgba(65, 236, 194, 0.6);
-        }
-      }
-    `;
-    document.head.appendChild(style);
 
     const createParticle = () => {
       const particle = document.createElement("div");
@@ -56,8 +18,8 @@ const SignUp = () => {
         position: fixed;
         width: 4px;
         height: 4px;
-        background: rgba(255, 255, 255, 0.5);
-        border-radius: 50%;
+        background: 9df0db
+        border-radius: 75%;
         pointer-events: none;
         z-index: 1;
         left: ${Math.random() * 100}vw;
@@ -110,7 +72,7 @@ const SignUp = () => {
       alert("Passwords do not match!");
       return;
     }
-    alert("Account created successfully! 🎉");
+    alert("Account created successfully!");
   };
 
   const simulateAuthAction = (provider) => {
