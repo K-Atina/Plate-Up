@@ -5,11 +5,10 @@
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   background: #9df0db;
   min-height: 100vh;
   position: relative;
-  scroll-behavior: smooth;
   display: flex;
   align-items: center;
   justify-content: center;
