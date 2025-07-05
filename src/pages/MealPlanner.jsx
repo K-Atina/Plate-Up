@@ -149,7 +149,7 @@ const MealPlanner = () => {
     };
 
     return (
-        <>
+        <div style={{backgroundColor:'#f7f7f7'}}>
             {/* Header */}
             <header className="header">
                 <div className="nav-container">
@@ -237,7 +237,7 @@ const MealPlanner = () => {
                     <p>© 2025 «PLATE UP». All rights reserved.</p>
                 </div>
             </footer>
-        </>
+        </div>
     );
 };
 
