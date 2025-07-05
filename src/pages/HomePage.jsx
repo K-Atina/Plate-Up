@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
-    <div>
+    <div style={{backgroundColor: '#f7f7f7',}}>
       {/* Header section */}
       <header className="header">
         <div className="nav-container">
@@ -35,7 +35,7 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="hero">
         <h1 style={{ marginBottom: "0px" }}>Your Perfect Meal Plans</h1>
-        <h1><span className="highlight">Made Simple</span></h1>
+        <h1 style={{color: '#28e28b'}}>Made Simple</h1>
         <p>
           Easily create personalized meal plans, smart shopping lists, and
           nutritious recipes—all in one seamless process.
@@ -44,8 +44,7 @@ const HomePage = () => {
           <Link to="/Meal-Planner" style={{ margin: 0, padding: 0 }}>
             <button
               className="btn-getstarted"
-              style={{ height: "42px", fontSize: "16px" }}
-            >
+              style={{ height: "42px", fontSize: "16px" }}>
               Start Planning
             </button>
           </Link>
@@ -90,7 +89,7 @@ const HomePage = () => {
           </div>
           <div className="card">
             <img
-              src="/icons/black heart.png"
+              src="/icons/black-heart.png"
               alt="Heart Icon"
               className="feature-icon"
             />

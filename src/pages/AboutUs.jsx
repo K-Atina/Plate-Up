@@ -36,7 +36,7 @@ const AboutUs = () => {
 
 
   return (
-    <div>
+    <div style={{backgroundColor:'#f8fffe'}}>
       {/* Header */}
       <header className="header">
         <div className="nav-container">

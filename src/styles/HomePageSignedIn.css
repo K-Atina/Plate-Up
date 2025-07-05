@@ -107,8 +107,11 @@ body {
 
 .hero {
   background: #e6faf1;
-  text-align: center;
   padding: 2.5rem 1rem 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero h1 {
@@ -117,9 +120,6 @@ body {
   margin-bottom: 0.5rem;
 }
 
-.hero .highlight {
-  color: #28e28b;
-}
 
 .hero p {
   color: #444;
