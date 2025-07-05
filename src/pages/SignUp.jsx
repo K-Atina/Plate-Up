@@ -71,7 +71,6 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     setTimeout(() => { //Waits for two seconds then shows a success alert and resets the isSubmitting state
-      alert('Account created successfully!');
       setIsSubmitting(false); //Resets the loading state
       // Navigate to quiz page
       navigate('/Quiz');
