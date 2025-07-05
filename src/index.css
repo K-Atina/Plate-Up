@@ -10,7 +10,7 @@
 /* Base Body Styles */
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f8fffe;
+  background: white;
   min-height: 90vh;
   line-height: 1.6;
 }

@@ -4,7 +4,7 @@ import '../styles/AboutUs.css';
 
 function AboutUsSignedIn() {
   return (
-    <>
+    <div style={{backgroundColor: '#f8fffe'}}>
       {/* Header */}
       <header className="header">
         <div className="nav-container">
@@ -36,7 +36,7 @@ function AboutUsSignedIn() {
       </header>
 
       {/* Main Content */}
-      <main className="main-content">
+      <main className="main-content" >
         <h1>About Us</h1>
         <p className="about-intro">
           At <span className="brand">Plate Up</span>, we believe that nourishing your body should be simple, empowering, and joyful. Our platform is designed to help you discover delicious recipes, prep smarter, and build sustainable habits that fit your unique lifestyle.
@@ -80,7 +80,7 @@ function AboutUsSignedIn() {
             <p>We provide creative ideas and tools to keep you motivated in the kitchen.</p>
           </div>
           <div className="value-card">
-            <img src="/icons/black heart.png" alt="Support" className="value-icon" />
+            <img src="/icons/black-heart.png" alt="Support" className="value-icon" />
             <h4>Support</h4>
             <p>Enjoy a supportive community and expert guidance every step of the way.</p>
           </div>
@@ -121,7 +121,7 @@ function AboutUsSignedIn() {
             <ul className="footer-links">
               <li><Link to="/All-Recipes" style={{ textDecoration: "none", color: "#a0aec0" }}>Recipe Search</Link></li>
               <li><Link to="/Meal-Planner" style={{ textDecoration: "none", color: "#a0aec0" }}>Meal Planning</Link></li>
-              <li><Link to="/Shopping-list" style={{ textDecoration: "none", color: "#a0aec0" }}>Shopping Lists</Link></li>
+              <li><Link to="/Shopping-List" style={{ textDecoration: "none", color: "#a0aec0" }}>Shopping Lists</Link></li>
             </ul>
           </div>
           <div className="footer-section">
@@ -137,7 +137,7 @@ function AboutUsSignedIn() {
           <p>© 2025 Plate Up. All rights reserved.</p>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
 
