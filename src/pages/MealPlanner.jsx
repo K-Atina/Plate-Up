@@ -53,8 +53,7 @@ const MealPlanner = () => {
     };
 
     const handleViewRecipe = (recipeId) => {
-        // Navigate to a recipe detail page using the recipeId
-        navigate(`/My-Recipes/${recipeId}`); // Assuming you have a route like /recipe-details/:id
+        navigate(`/My-Recipes/${recipeId}`); 
     };
 
     const handleRemoveMeal = (day, mealType) => {
@@ -69,12 +68,11 @@ const MealPlanner = () => {
 
     const handleBrowseRecipes = (mealType) => {
         // Navigate to the general recipes page
-        console.log('Browse recipes for:', mealType); // Can remove this console.log after testing
+        console.log('Browse recipes for:', mealType); 
         navigate('/All-Recipes');
     };
 
     const handleAddFromFavorites = (day, mealType) => {
-        // This might open a modal or another internal function, not direct navigation
         console.log('Add from favorites:', day, mealType);
     };
 
@@ -162,23 +160,23 @@ const MealPlanner = () => {
                                 src="/icons/Logo.png"
                                 alt="Logo"
                                 className="logo-img"
-                                style={{height: '38px', width: '38px'}}
+                                style={{height: '38px', width: '38px',padding: '10px'}}
                             />
                             PLATE UP
                         </Link>
                     </div>
                     <nav>
                         <ul className="nav-links">
-                            <li><Link to="/home-signed-in">Home</Link></li>
-                            <li><Link to="/recipes-signed-in">Recipes</Link></li>
-                            <li><Link to="/meal-planner" className="active">Meal Plans</Link></li> {/* This is the current page */}
-                            <li><Link to="/favourites">Favourites</Link></li>
-                            <li><Link to="/about-signed-in">About</Link></li> {/* Assuming it's the signed-in About Us page */}
+                            <li><Link to="/Home">Home</Link></li>
+                            <li><Link to="/All-Recipes">Recipes</Link></li>
+                            <li><Link to="/Meal-Planner" className="active">Meal Plans</Link></li> 
+                            <li><Link to="/Favourites">Favourites</Link></li>
+                            <li><Link to="/About-Us-User">About</Link></li> 
                         </ul>
                     </nav>
                     <div className="auth-buttons">
-                        <Link to="/" className="btn-signin">Log Out</Link> {/* Link to the public homepage for logout */}
-                        <Link to="/profile" className="btn-started">Profile</Link>
+                        <Link to="/" className="btn-signin">Log Out</Link> 
+                        <Link to="/Profile" className="btn-started">Profile</Link>
                     </div>
                 </div>
             </header>
@@ -222,9 +220,9 @@ const MealPlanner = () => {
                     <div className="footer-section">
                         <h3>Features</h3>
                         <ul className="footer-links">
-                            <li><Link to="/recipes-signed-in">Recipe Search</Link></li>
-                            <li><Link to="/meal-planner">Meal Planning</Link></li> {/* This is the current page */}
-                            <li><Link to="/shopping-list">Shopping Lists</Link></li> {/* Corrected path to /shopping-list */}
+                            <li><Link to="/My-Recipes">Recipe Search</Link></li>
+                            <li><Link to="/Meal-Planner">Meal Planning</Link></li>
+                            <li><Link to="/Shopping-List">Shopping Lists</Link></li>
                         </ul>
                     </div>
                     <div className="footer-section">
