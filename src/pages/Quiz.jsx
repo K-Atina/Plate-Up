@@ -68,15 +68,7 @@ const Quiz = () => {
     });
   };
 
-  const handleRating = (questionId, option, rating) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: {
-        ...prev[questionId],
-        [option]: rating
-      }
-    }));
-  };
+
 
   const startQuiz = () => {
     setShowHomePage(false);
@@ -122,7 +114,7 @@ const Quiz = () => {
       timestamp: new Date().toISOString(),
       answers: answers
     }));
-    navigate('/Meal-Plan');
+    navigate('/Meal-Planner');
   };
 
   // Home Page
