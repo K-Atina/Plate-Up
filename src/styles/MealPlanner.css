@@ -6,9 +6,10 @@
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f8fffe;
+  background: white;
   min-height: 100vh;
   line-height: 1.6;
+
 }
 
 /* Header */
@@ -111,6 +112,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 2rem;
+  background-color: white;
 }
 
 .page-header {

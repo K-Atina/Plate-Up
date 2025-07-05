@@ -114,7 +114,7 @@ const SignUp = () => {
           border-radius: 24px;
           padding: 40px;
           width: 100%;
-          max-width: 600px;
+          max-width: 480px;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
           border: 1px solid rgba(0, 0, 0, 0.2);
           position: relative;

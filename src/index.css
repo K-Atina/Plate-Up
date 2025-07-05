@@ -11,7 +11,7 @@
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   background: #f8fffe;
-  min-height: 100vh;
+  min-height: 90vh;
   line-height: 1.6;
 }
 
@@ -26,7 +26,7 @@ body {
 }
 
 .nav-container {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;

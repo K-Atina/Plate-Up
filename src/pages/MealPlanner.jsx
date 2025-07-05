@@ -54,7 +54,7 @@ const MealPlanner = () => {
 
     const handleViewRecipe = (recipeId) => {
         // Navigate to a recipe detail page using the recipeId
-        navigate(`/recipe-details/${recipeId}`); // Assuming you have a route like /recipe-details/:id
+        navigate(`/My-Recipes/${recipeId}`); // Assuming you have a route like /recipe-details/:id
     };
 
     const handleRemoveMeal = (day, mealType) => {
@@ -70,7 +70,7 @@ const MealPlanner = () => {
     const handleBrowseRecipes = (mealType) => {
         // Navigate to the general recipes page
         console.log('Browse recipes for:', mealType); // Can remove this console.log after testing
-        navigate('/recipes-signed-in');
+        navigate('/All-Recipes');
     };
 
     const handleAddFromFavorites = (day, mealType) => {
@@ -157,7 +157,7 @@ const MealPlanner = () => {
                 <div className="nav-container">
                     <div className="logo">
                         {/* Logo linking to the signed-in home page */}
-                        <Link to="/home-signed-in" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Link to="/home" style={{ textDecoration: 'none', color: 'inherit', display: 'flex',justifyContent:'center', alignItems: 'center', gap: '0.5rem' }}>
                             <img
                                 src="/icons/Logo.png"
                                 alt="Logo"
