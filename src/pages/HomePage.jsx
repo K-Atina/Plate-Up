@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/HomepageSignedIn.css';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignedInHomepage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -92,29 +92,11 @@ const SignedInHomepage = () => {
                         Welcome back!👋
                     </h1>
                     <p className="welcome-subtitle">
-                        {getTodaysDate()} • Ready to plan your healthy meals?
+                        {getTodaysDate()} • <Link to="/All-Recipes">Ready to plan your healthy meals?</Link>
                     </p>
                 </div>
 
-                {/* Quick Search */}
-                <div className="quick-search">
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            placeholder="Search for recipes..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="search-input"
-                        />
-                        <button
-                            onClick={handleSearch}
-                            className="search-button"
-                        >
-                            Search
-                        </button>
-                    </div>
-                </div>
-
+                
                 {/* Quick Stats */}
                 <div className="quick-stats">
                     <div className="stats-grid">

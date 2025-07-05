@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Recipe.css';
 import { Link } from 'react-router-dom';
 
-const Recipes_S = () => {
+const Recipe_S = () => {
     const [searchInput, setSearchInput] = useState('');
     const [dietFilter, setDietFilter] = useState('');
     const [recipes, setRecipes] = useState([]);
@@ -23,7 +23,7 @@ const Recipes_S = () => {
     };
 
     return (
-        <>
+        <div style={{backgroundColor: 'white'}}>
             {/* Header */}
             <header className="header">
                 <div className="nav-container">
@@ -142,8 +142,8 @@ const Recipes_S = () => {
                     <p>© 2025 «PLATE UP». All rights reserved.</p>
                 </div>
             </footer>
-        </>
+        </div>
     );
 };
 
-export default Recipes_S;
+export default Recipe_S;
