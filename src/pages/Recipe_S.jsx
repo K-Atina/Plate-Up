@@ -15,7 +15,7 @@ const Recipe_S = () => {
     const [error, setError] = useState(null);
 
     // Replace with your actual Spoonacular API key
-    const SPOONACULAR_API_KEY = import.meta.env.VITE_PLATE_UP_SPOONACULAR_API_KEY;
+    const SPOONACULAR_API_KEY = '6b1da363213c48ec9de381ce55b71039';
 
     // Function to fetch recipes from Spoonacular API
     const fetchRecipes = useCallback(async () => {
@@ -25,7 +25,7 @@ const Recipe_S = () => {
         const queryParams = new URLSearchParams({
             apiKey: SPOONACULAR_API_KEY,
             query: searchInput,
-            number: 12, // You can adjust the number of recipes to fetch
+            number: 20, // You can adjust the number of recipes to fetch
             addRecipeInformation: true,
             instructionsRequired: true,
             fillIngredients: true
@@ -134,15 +134,15 @@ const Recipe_S = () => {
                     </div>
                     <nav>
                         <ul className="nav-links">
-                            <li><Link to ="/HomePage_SignedIn">Home</Link></li>
+                            <li><Link to ="/Home">Home</Link></li>
                             <li><Link to ="#" className="active">Recipes</Link></li>
-                            <li><Link to ="/meal-planner">Meal Plans</Link></li>
-                            <li><Link to="/favourites">Favourites</Link></li>
-                            <li><Link to="/AboutUs-S">About</Link></li>
+                            <li><Link to ="/Meal-Planner">Meal Plans</Link></li>
+                            <li><Link to="/Favourites">Favourites</Link></li>
+                            <li><Link to="/About-Us-User">About</Link></li>
                         </ul>
                     </nav>
                     <div className="auth-buttons">
-                        <Link to ="/index" className="btn-signin">Log Out</Link>
+                        <Link to ="/" className="btn-signin">Log Out</Link>
                         <Link to="/Profile" className="btn-started">Profile</Link>
                     </div>
                 </div>
