@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Favourites.css';
+import { Link, useNavigate } from 'react-router-dom'; // Import Link
+
+import '../styles/Favourites.css'; // Your specific styles for Favourites page
 
 const Favourites = () => {
   const [favourites, setFavourites] = useState([]);
@@ -9,7 +11,9 @@ const Favourites = () => {
     totalCookTime: 0
   });
 
-  // Mock data for demonstration - replace with actual data loading logic
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  // Mock data for demonstration - replace with actual data loading logic from Firebase
   useEffect(() => {
     const mockFavourites = [
       {
@@ -37,34 +41,19 @@ const Favourites = () => {
         difficulty: "Easy"
       }
     ];
-    
+
     setFavourites(mockFavourites);
-    
-    // Calculate stats based on actual data
-    const totalFavs = mockFavourites.length;
-    const totalCals = mockFavourites.reduce((sum, recipe) => sum + recipe.calories, 0);
-    const avgCals = totalFavs > 0 ? Math.round(totalCals / totalFavs) : 0;
-    const totalTime = mockFavourites.reduce((sum, recipe) => sum + recipe.cookTime, 0);
-    const totalHours = totalTime / 60;
-    
-    setStats({
-      totalFavourites: totalFavs,
-      avgCalories: avgCals,
-      totalCookTime: parseFloat(totalHours.toFixed(1))
-    });
+    updateStats(mockFavourites); // Calculate stats based on initial data
   }, []);
 
-  const removeFavourite = (recipeId) => {
-    const updatedFavourites = favourites.filter(recipe => recipe.id !== recipeId);
-    setFavourites(updatedFavourites);
-    
-    // Recalculate stats
-    const totalFavs = updatedFavourites.length;
-    const totalCals = updatedFavourites.reduce((sum, recipe) => sum + recipe.calories, 0);
+  // Function to recalculate stats whenever favourites change
+  const updateStats = (currentFavourites) => {
+    const totalFavs = currentFavourites.length;
+    const totalCals = currentFavourites.reduce((sum, recipe) => sum + recipe.calories, 0);
     const avgCals = totalFavs > 0 ? Math.round(totalCals / totalFavs) : 0;
-    const totalTime = updatedFavourites.reduce((sum, recipe) => sum + recipe.cookTime, 0);
+    const totalTime = currentFavourites.reduce((sum, recipe) => sum + recipe.cookTime, 0);
     const totalHours = totalTime / 60;
-    
+
     setStats({
       totalFavourites: totalFavs,
       avgCalories: avgCals,
@@ -72,10 +61,16 @@ const Favourites = () => {
     });
   };
 
+  const removeFavourite = (recipeId) => {
+    const updatedFavourites = favourites.filter(recipe => recipe.id !== recipeId);
+    setFavourites(updatedFavourites);
+    updateStats(updatedFavourites); // Recalculate stats immediately after updating favourites
+  };
 
+  // Helper for programmatic navigation (e.g., for buttons that trigger actions before navigating)
   const handleNavigation = (path) => {
-    // In a real application, this would use React Router
     console.log(`Navigating to: ${path}`);
+    navigate(path);
   };
 
   return (
@@ -83,21 +78,29 @@ const Favourites = () => {
       {/* Header */}
       <header className="header">
         <div className="nav-container">
-          <div className="logo" onClick={() => handleNavigation('/home')}>
-            <span>PLATE UP</span>
+          <div className="logo">
+            {/* Logo linked to home page */}
+            <Link to="/HomePage_SignedIn" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
+              <span>PLATE UP</span>
+            </Link>
           </div>
-          
-          <nav className="nav-links">
-            <a href="#" onClick={() => handleNavigation('/Home')}>Home</a>
-            <a href="#" onClick={() => handleNavigation('/My-Recipes')}>Recipes</a>
-            <a href="#" onClick={() => handleNavigation('/Meal-Planner')}>Meal Plans</a>
-            <a href="#" onClick={() => handleNavigation('/Favourites')} className="active">Favourites</a>
-            <a href="#" onClick={() => handleNavigation('/About-Us-User')}>About</a>
+
+          <nav> 
+            <ul className="nav-links"> 
+              <li><Link to="/Home">Home</Link></li>
+              <li><Link to="/recipe">Recipes</Link></li> 
+              <li><Link to="/Meal-Planner">Meal Plans</Link></li>
+              <li><Link to="/Favourites" className="active">Favourites</Link></li> 
+              <li><Link to="/About-Us-User">About</Link></li> 
+            </ul>
           </nav>
-          
+
           <div className="auth-buttons">
-            <a href="#" onClick={() => handleNavigation('/')} className="btn-signin">Log Out</a>
-            <a href="#" onClick={() => handleNavigation('/Profile')} className="btn-started">Profile</a>
+            {/* Log Out button (can trigger actual logout function) */}
+            <button onClick={() => handleNavigation('/')} className="btn-signin">Log Out</button>
+            {/* Profile link */}
+            <Link to="/Profile" className="btn-started">Profile</Link>
           </div>
         </div>
       </header>
@@ -132,8 +135,8 @@ const Favourites = () => {
               <div key={recipe.id} className="favourite-card" style={{animationDelay: `${(index + 1) * 0.1}s`}}>
                 <div className="favourite-badge">♥</div>
                 <div className="recipe-image">
-                  <img 
-                    src={recipe.image} 
+                  <img
+                    src={recipe.image}
                     alt={recipe.name}
                   />
                 </div>
@@ -143,13 +146,13 @@ const Favourites = () => {
                     {recipe.calories} cal • {recipe.cookTime} min • {recipe.difficulty}
                   </div>
                   <div className="recipe-buttons">
-                    <button 
-                      onClick={() => handleNavigation(`/recipe/${recipe.id}`)}
+                    <button
+                      onClick={() => handleNavigation(`/recipe/${recipe.id}`)} 
                       className="btn-view"
                     >
                       View Recipe
                     </button>
-                    <button 
+                    <button
                       onClick={() => removeFavourite(recipe.id)}
                       className="btn-remove"
                     >
@@ -168,8 +171,8 @@ const Favourites = () => {
             <p>
               Start exploring our delicious recipes and click the heart icon to save your favourites here!
             </p>
-            <button 
-              onClick={() => handleNavigation('/recipes')}
+            <button
+              onClick={() => handleNavigation('/recipe')}
               className="btn-browse"
             >
               Browse Recipes
@@ -183,24 +186,27 @@ const Favourites = () => {
         <div className="footer-container">
           <div>
             <div className="footer-brand">
-              <div className="logo-icon"></div>
-              <span>PLATE UP</span>
+              {/* Logo in footer, linking to home page */}
+              <Link to="/HomePage_SignedIn" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
+                <span>PLATE UP</span>
+              </Link>
             </div>
             <p className="footer-description">
-              Simplify your healthy eating through personalized meal planning, 
+              Simplify your healthy eating through personalized meal planning,
               nutritious recipe discovery, and organized shopping lists.
             </p>
           </div>
-          
+
           <div className="footer-section">
             <h3>Features</h3>
             <ul className="footer-links">
-              <li><a href="#" onClick={() => handleNavigation('/recipes')}>Recipe Search</a></li>
-              <li><a href="#" onClick={() => handleNavigation('/meal-planner')}>Meal Planning</a></li>
-              <li><a href="#" onClick={() => handleNavigation('/shopping-list')}>Shopping Lists</a></li>
+              <li><Link to="/recipe" style={{textDecoration: 'none', color: '#a0aec0'}}>Recipe Search</Link></li> {/* Consistent /recipe path */}
+              <li><Link to="/Meal-Planner" style={{textDecoration: 'none', color: '#a0aec0'}}>Meal Planning</Link></li>
+              <li><Link to="/Shopping-list" style={{textDecoration: 'none', color: '#a0aec0'}}>Shopping Lists</Link></li>
             </ul>
           </div>
-          
+
           <div className="footer-section">
             <h3>Support</h3>
             <ul className="footer-links">
@@ -209,7 +215,7 @@ const Favourites = () => {
             </ul>
           </div>
         </div>
-        
+
         <div className="footer-bottom">
           <p>© 2025 «PLATE UP». All rights reserved.</p>
         </div>
