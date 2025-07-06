@@ -6,10 +6,10 @@
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: white;
+  background: #f8fffe;
   min-height: 100vh;
   line-height: 1.6;
-
+  
 }
 
 /* Header */

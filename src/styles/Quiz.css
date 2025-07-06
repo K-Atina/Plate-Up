@@ -10,8 +10,9 @@ html, body {
 
 /* Make sure Quiz takes full screen */
 .quiz-container {
+  min-height: 90vh;
   width: 100vw;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   background: linear-gradient(135deg, #72e2c6 0%, #9df0db 100%);
