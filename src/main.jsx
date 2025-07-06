@@ -19,6 +19,8 @@ import ShoppingList from './pages/ShoppingList';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 
+
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -37,6 +39,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Route path="/Shopping-List" element={<ShoppingList />} />
       <Route path="/Sign-In" element={<SignIn />} />
       <Route path="/Sign-Up" element={<SignUp />} />
+
+
     </Routes>
     </BrowserRouter>
   </React.StrictMode>
