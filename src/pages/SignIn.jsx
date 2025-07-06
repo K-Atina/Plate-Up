@@ -1,44 +1,94 @@
 import React, { useState } from 'react';
-import '../styles/SignIn.css'; // Ensure you have the correct path to your CSS file
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; 
+import '../styles/SignIn.css';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // Consolidated error state
+  const [message, setMessage] = useState(''); // For success messages, e.g., password reset
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignIn = (e) => {
+  const { login, resetPassword } = useAuth(); // Get login and resetPassword from AuthContext
+  const navigate = useNavigate();
+
+
+  const validateInputs = () => {
+    let isValid = true;
+    if (!email) {
+      setError('Email is required.');
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setError('Email is invalid.');
+      isValid = false;
+    }
+    if (!password) {
+      if (isValid) setError('Password is required.');
+      isValid = false;
+    }
+    return isValid;
+  };
+
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    // Add your sign-in logic here
-    console.log('Sign in attempt:', { email, password });
+    setError(''); 
+    setMessage('');
+
+    if (!validateInputs()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await login(email, password);
+      navigate('/Home'); 
+    } catch (err) {
+      console.error('Sign in error:', err);
+      // Handle specific Firebase authentication errors
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        setError('Invalid email or password.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('The email address is not valid.');
+      } else {
+        setError('Failed to sign in. Please check your credentials or try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleForgotPassword = () => {
-    // Add forgot password logic here
-    console.log('Forgot password clicked');
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError(''); // Clear previous errors
+    setMessage(''); // Clear previous messages
+
+    if (!email) {
+      setError('Please enter your email address to reset your password.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await resetPassword(email); // Use the resetPassword function from AuthContext
+      setMessage('Password reset email sent! Check your inbox.');
+    } catch (err) {
+      console.error('Forgot password error:', err);
+      setError('Failed to send password reset email. Please check the email address.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleGoogleSignIn = () => {
-    // Add Google sign-in logic here
-    console.log('Google sign-in clicked');
-  };
-
-  const handleMicrosoftSignIn = () => {
-    // Add Microsoft sign-in logic here
-    console.log('Microsoft sign-in clicked');
-  };
-
-  const handleAppleSignIn = () => {
-    // Add Apple sign-in logic here
-    console.log('Apple sign-in clicked');
-  };
-
-  const handleSignUp = () => {
-    // Add sign-up navigation logic here
-    console.log('Sign up clicked');
+  const handleSocialSignIn = (provider) => {
+    setError(`${provider} sign-in not yet implemented with Firebase. Please use email/password.`);
+    
   };
 
   return (
-    <div>
+    <div className="signin-container">
+     
       <div className="animated-bg"></div>
       
       <div className="floating-elements">
@@ -55,18 +105,23 @@ const SignIn = () => {
             <p>Sign in to your account</p>
           </div>
 
-          <form id="signinForm" onSubmit={handleSignIn}>
+          {/* Display error or success messages */}
+          {error && <div className="error-message">{error}</div>}
+          {message && <div className="success-message">{message}</div>}
+
+          <form onSubmit={handleSignIn}> {/* Use form and onSubmit */}
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
               <div className="input-wrapper">
                 <input 
                   type="email" 
                   id="email" 
-                  className="form-control" 
+                  className={`form-control ${error && email ? 'error' : ''}`} 
                   placeholder="Enter your email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required 
+                  aria-describedby={error && email ? "email-error" : undefined}
                 />
                 <div className="input-icon">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -75,6 +130,7 @@ const SignIn = () => {
                   </svg>
                 </div>
               </div>
+    
             </div>
 
             <div className="form-group">
@@ -83,11 +139,12 @@ const SignIn = () => {
                 <input 
                   type="password" 
                   id="password" 
-                  className="form-control" 
+                  className={`form-control ${error && password ? 'error' : ''}`}  
                   placeholder="Enter your password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required 
+                  aria-describedby={error && password ? "password-error" : undefined}
                 />
                 <div className="input-icon">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -100,11 +157,11 @@ const SignIn = () => {
             </div>
 
             <div className="forgot-password">
-              <Link to ="#" onClick={handleForgotPassword}>Forgot your password?</Link>
+              <Link to="/reset-password" onClick={handleForgotPassword}>Forgot your password?</Link> 
             </div>
 
-            <button type="submit" className="signin-btn">
-              Sign In
+            <button type="submit" className="signin-btn" disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
 
@@ -113,7 +170,7 @@ const SignIn = () => {
           </div>
 
           <div className="social-buttons">
-            <Link to="#" className="social-btn google-btn" onClick={handleGoogleSignIn}>
+            <button className="social-btn google-btn" onClick={() => handleSocialSignIn('Google')}>
               <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px'}}>
                 <svg viewBox="0 0 24 24" style={{width: '18px', height: '18px'}}>
                   <path fill="#ea4335" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -123,9 +180,9 @@ const SignIn = () => {
                 </svg>
                 <span style={{fontSize: '10px', fontWeight: '600'}}>Google</span>
               </div>
-            </Link>
+            </button>
             
-            <Link to="#" className="social-btn microsoft-btn" onClick={handleMicrosoftSignIn}>
+            <button className="social-btn microsoft-btn" onClick={() => handleSocialSignIn('Microsoft')}>
               <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px'}}>
                 <svg viewBox="0 0 24 24" style={{width: '18px', height: '18px'}}>
                   <path fill="#f25022" d="M0 0h11v11H0z"/>
@@ -135,20 +192,20 @@ const SignIn = () => {
                 </svg>
                 <span style={{fontSize: '10px', fontWeight: '600'}}>Microsoft</span>
               </div>
-            </Link>
+            </button>
             
-            <Link to ="#" className="social-btn apple-btn" onClick={handleAppleSignIn}>
+            <button className="social-btn apple-btn" onClick={() => handleSocialSignIn('Apple')}>
               <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px'}}>
                 <svg viewBox="0 0 24 24" fill="currentColor" style={{width: '18px', height: '18px'}}>
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                 </svg>
                 <span style={{fontSize: '10px', fontWeight: '600'}}>Apple</span>
               </div>
-            </Link>
+            </button>
           </div>
 
           <div className="signup-link">
-            Don't have an account? <Link to="/Sign-up" onClick={handleSignUp}>Sign up here</Link>
+            Don't have an account? <Link to="/Sign-Up">Sign up here</Link> {/* Use Link */}
           </div>
         </div>
       </div>
