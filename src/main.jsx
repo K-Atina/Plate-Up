@@ -13,7 +13,7 @@ import MealPlanner from './pages/MealPlanner';
 import Profile from './pages/Profile';
 import Quiz from './pages/Quiz';
 import Recipes_S from './pages/Recipe_S';
-import Recipes from './pages/Recipe';
+import Recipes from './pages/Recipes';
 import RecipeView from './pages/RecipeView';
 import ShoppingList from './pages/ShoppingList';
 import SignUp from './pages/SignUp';

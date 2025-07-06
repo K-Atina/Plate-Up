@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Recipe.css';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+//For searchbar icon
+import {RiSearchLine} from 'react-icons/ri';
 
 const Recipes = () => {
+
+    const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
     const [dietFilter, setDietFilter] = useState('');
     const [recipes, setRecipes] = useState([]);
@@ -21,6 +27,14 @@ const Recipes = () => {
         setDietFilter(e.target.value);
     };
 
+    function Redirect(){
+        navigate("/Sign-Up")
+    }
+
+
+
+    
+
     return (
         <>
             {/* Header */}
@@ -37,14 +51,14 @@ const Recipes = () => {
                     </div>
                     <nav>
                         <ul className="nav-links">
-                            <li><Link to="/index">Home</Link></li>
+                            <li><Link to="/">Home</Link></li>
                             <li><Link to="#" className="active">Recipes</Link></li>
-                            <li><Link to="/AboutUs">About</Link></li>
+                            <li><Link to="/About-Us">About</Link></li>
                         </ul>
                     </nav>
                     <div className="auth-buttons">
-                        <Link to ="/signin" className="btn-signin">Sign In</Link>
-                        <Link to ="/pages/Sign-up.html" className="btn-started">Get Started</Link>
+                        <Link to ="/Sign-In" className="btn-signin">Sign In</Link>
+                        <Link to ="/Sign-Up" className="btn-started">Get Started</Link>
                     </div>
                 </div>
             </header>
@@ -59,13 +73,18 @@ const Recipes = () => {
 
                 {/* Search Section */}
                 <section className="search-section">
-                    <input 
+                    <div className='search-box'>
+                        <input 
                         type="text" 
                         className="search-input" 
                         placeholder="Search for recipes..." 
                         value={searchInput}
                         onChange={handleSearchChange}
-                    />
+                        />
+                        <RiSearchLine className="search-icon" onClick={Redirect}/>
+                        
+                    </div>
+
                     <select 
                         className="diet-filter" 
                         value={dietFilter}

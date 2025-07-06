@@ -160,7 +160,7 @@ const MealPlanner = () => {
                                 src="/icons/Logo.png"
                                 alt="Logo"
                                 className="logo-img"
-                                style={{height: '38px', width: '38px',padding: '10px'}}
+                                style={{height: '70px', width: '70px',padding: '10px'}}
                             />
                             PLATE UP
                         </Link>
