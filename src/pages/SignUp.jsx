@@ -398,13 +398,13 @@ const SignUp = () => {
       `}</style>
       
       <div className="logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
-        <div className="website-name" style={{ color: '#28e28b', fontWeight: '700', fontSize: '2.2rem' }}>
+        <div className="website-name" style={{ color: `#00d2a0`, fontWeight: '700', fontSize: '2.2rem' }}>
           PLATE UP
         </div>
         <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{ height: '60px', width: '60px' }} />
       </div>
       
-      <h1 style={{color: `rgb(52,235,143)`}}>SIGN UP</h1>
+      <h1 style={{color: `#00d2a0`}}>SIGN UP</h1>
       
       <div id="signupForm">
         <div className="form-row">

@@ -177,6 +177,8 @@ body {
 .logo {
   text-align: center;
   margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo h1 {
@@ -185,17 +187,9 @@ body {
   font-weight: 800;
   margin-bottom: 8px;
   text-shadow: none;
-  animation: logoGlow 3s ease-in-out infinite alternate;
+  color: #00d2a0;
 }
 
-@keyframes logoGlow {
-  0% {
-    color: #2d3748;
-  }
-  100% {
-    color: #00d2a0;
-  }
-}
 
 .logo p {
   color: #718096;
