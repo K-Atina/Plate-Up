@@ -15,7 +15,7 @@ const Recipe_S = () => {
     const [error, setError] = useState(null);
 
     // Replace with your actual Spoonacular API key
-    const SPOONACULAR_API_KEY = '6b1da363213c48ec9de381ce55b71039';
+    const SPOONACULAR_API_KEY = import.meta.env.VITE_PLATE_UP_SPOONACULAR_API_KEY;
 
     // Function to fetch recipes from Spoonacular API
     const fetchRecipes = useCallback(async () => {
