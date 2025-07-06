@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const App = () => {
   return (
-    <div>
+    <div style={{backgroundColor:`#f7f7f7`}}>
       {/* Header */}
       <header className="header">
         <div className="nav-container">
