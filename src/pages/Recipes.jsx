@@ -11,32 +11,79 @@ const Recipes = () => {
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
     const [dietFilter, setDietFilter] = useState('');
-    const [recipes, setRecipes] = useState([]);
+    const [recipes, setRecipes] = useState([]); //To hold fetched recipe data
 
     //States for API calls
+    //True when fetching data , false otherwise
     const [loading , setLoading] = useState(true);
+    //null if no error, otherwise will hold error message
     const [error , setError] = useState(null);
 
-    //replace this with your actual recipe data or API call
+    //API
+    const fetchInitialRecipes = async () =>{
+        //Set loading state to true since we are fetching data
+        setLoading(true);
+        //Resets any previous error messages
+        setError(null);
+
+        try{
+            //Used MealDB.com --> Will change to spoonacular
+            //Target APi endpoint
+            const randomApiURl = 'https://www.themealdb.com/api/json/v1/1/random.php';
+            const numRandomRecipes = 10
+
+            const fetchedRandomRecipes = [];
+            for (let i = 0; i < numRandomRecipes; i++){
+                //we fetch the URL nad return a promise that will resolve promise
+                const response= await fetch (randomApiURl); //Initiates the request to the apiUrl and returns a Promise
+                if (!response.ok){
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data= await response.json();
+                if (data.meals && data.meals.length > 0){
+                    fetchedRandomRecipes.push (data.meals[0]);
+                }
+
+            }
+
+            if (fetchedRandomRecipes.length>0){
+                setRecipes(fetchedRandomRecipes);
+            }else {
+                setRecipes([]); //If no meals have been found
+                setError("No recipes fetched. The API might be temporarily unvailable");
+            }
+              
+        } catch (err){
+            console.error("Failed to fetch recipes:", err);
+            setError("Failed to load recipes. Please check your internet conncetion or try again later.");
+            setRecipes([])
+        } finally {
+            setLoading(false)
+        }
+    }
+    
+    //To call fetchInitialRecipes
     useEffect(() => {
-        
-        setRecipes([]);
-    }, []);
+        fetchInitialRecipes();//Calling our fetching function
+    }, []) //Ensures that it only runs once
 
     const handleSearchChange = (e) => {
         setSearchInput(e.target.value);
+        //Updates 'searchInput' state
     };
 
-    const handleDietFilterChange = (e) => {
+    const handleDietChange = (e) =>{
         setDietFilter(e.target.value);
-    };
+        navigate("/Sign-Up")
+    }
+
 
     function Redirect(){
         navigate("/Sign-Up")
     }
 
     return (
-        <>
+        <div style={{backgroundColor: '#f7f7f7'}}>
             {/* Header */}
             <header className="header">
                 <div className="nav-container">
@@ -80,6 +127,11 @@ const Recipes = () => {
                         placeholder="Search for recipes..." 
                         value={searchInput}
                         onChange={handleSearchChange}
+                        onKeyDown={(e) => {
+                            if(e.key === 'Enter'){
+                                Redirect() //When enter key on kenyboard is pressed, user redirected to sign-up
+                            }
+                        }}
                         />
                         <RiSearchLine className="search-icon" onClick={Redirect}/>
                         
@@ -88,7 +140,7 @@ const Recipes = () => {
                     <select 
                         className="diet-filter" 
                         value={dietFilter}
-                        onChange={handleDietFilterChange}
+                        onChange={Redirect}
                     >
                         <option value="">Diet Type</option>
                         <option value="vegetarian">Vegetarian</option>
@@ -102,16 +154,33 @@ const Recipes = () => {
 
                 {/* Recipes Grid */}
                 <section className="recipes-grid" id="recipesGrid">
-                    {/* Recipe cards will be generated here */}
-                    {recipes.length === 0 ? (
-                        <p>No recipes found. Add your recipe data to display them here.</p>
-                    ) : (
-                        recipes.map((recipe, index) => (
-                            <div key={index} className="recipe-card">
-                                {/* Recipe card content would go here */}
+                    {loading && <p>Loading delicious recipes...</p>}
+                    {error && <p className="error-message">Error: {error}</p>}
+
+                    {!loading && !error && recipes.length === 0 && (
+                        <p>No recipes found. Please try again later or check your network.</p>
+                    )}
+
+                    {!loading && !error && recipes.length > 0 && (
+                        recipes.map((recipe) => (
+                            <div key={recipe.idMeal} className="recipe-card">
+                                {/* Display Recipe Image */}
+                                {recipe.strMealThumb && (
+                                    <img
+                                        src={recipe.strMealThumb}
+                                        alt={recipe.strMeal}
+                                        className="recipe-image"
+                                    />
+                                )}
+                                {/* Display Recipe Name */}
+                                <h3>{recipe.strMeal}</h3>
+                                <p>Category: {recipe.strCategory}</p>
+
                             </div>
                         ))
                     )}
+                            
+                    
                 </section>
             </main>
 
@@ -158,7 +227,7 @@ const Recipes = () => {
                     <p>© 2025 «PLATE UP». All rights reserved.</p>
                 </div>
             </footer>
-        </>
+        </div>
     );
 };
 
