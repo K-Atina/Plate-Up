@@ -31,10 +31,6 @@ const Recipes = () => {
         navigate("/Sign-Up")
     }
 
-
-
-    
-
     return (
         <>
             {/* Header */}
