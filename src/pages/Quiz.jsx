@@ -156,7 +156,7 @@ const Quiz = () => {
 
   if (showResults) {
     return (
-      <div className="quiz-container">
+      <div className="quiz-container" style={{backgroundColor: `white`}}>
         <div className="quiz-card">
           <h2 style={{textAlign: 'center'}}>Quiz Complete!</h2>
           <div className="results-summary">

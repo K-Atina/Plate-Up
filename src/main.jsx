@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 
 import App from "./App";
-import "./index.css";
+import './index.css';
 import AboutUsSignedIn from "./pages/AboutUs_S";
 import AboutUs from "./pages/AboutUs";
 import Favourites from "./pages/Favourites";
