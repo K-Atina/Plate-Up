@@ -18,7 +18,7 @@ import RecipeView from "./pages/RecipeView";
 import ShoppingList from "./pages/ShoppingList";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

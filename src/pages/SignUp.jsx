@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {useAuth} from '../context/AuthContext';
+import {db} from '../firebaseConfig';
+import {doc, setDoc} from 'firebase/firestore';
 
+import "../styles/SignUp.css";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -10,11 +14,16 @@ const SignUp = () => {
     password: '',
     confirmPassword: ''
   });
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [passwordStrength, setPasswordStrength] = useState(0); //For password
+  const [isSubmitting, setIsSubmitting] = useState(false); //for submitting
+  const [error, setError] = useState('');  //For error message
+  const [message , setMessage] = useState('') //For success message
+  
   //UseNavigate hook
   const navigate = useNavigate(); //Initialises useNavigate
+
+  const {signup} = useAuth(); //Getting the signup function
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,22 +70,51 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); //Will prevent the page from reloading
 
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+    setError('');
+    setMessage('');
+
+    if(formData.password != formData.confirmPassword){
+      setError("Passwords do not match");
       return;
     }
 
-    //NO backend --> Figure out how to do auth/o without backend
-    // Simulate account creation (doesn't actually do anything cause there is no backend)
-    setIsSubmitting(true);
+    try{
+      setIsSubmitting(true); //Submission preveneted before all data is enetered
 
-    setTimeout(() => { //Waits for two seconds then shows a success alert and resets the isSubmitting state
-      setIsSubmitting(false); //Resets the loading state
-      // Navigate to quiz page
+      //Aunthentication with Firebase
+      const userCredential = await signup(formData.email, formData.password);
+      const user= userCredential.user;
+
+      //Storing extra data about user in firestore
+      await setDoc(doc(db , 'users', user.uid),{
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        createdAt: new Date()
+      });
+
+      setMessage('Acount created successfully!');
+      //To quiz page after sign-up
       navigate('/Quiz');
-    }, 2000);
-  };
 
+    } catch (err){
+      console.error("Failed to create an account: ", err);
+
+      //Firebase errors
+      if (err.code === 'auth/email-already-in-use') {
+        setError('The email address is already in use by another account.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('The email address is not valid.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Password should be at least 6 characters.');
+      } else {
+        setError('Failed to create an account. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false); //You can submit
+    }
+
+  };
 
   const simulateAuthAction = (provider) => {
     alert(`Signing up with ${provider}...`);
@@ -96,307 +134,6 @@ const SignUp = () => {
 
   return (
     <div className="signup-container">
-      <style jsx>{`
-        body {
-          font-family: "Segoe UI", sans-serif;
-          background: #9df0db;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
-          margin: 0;
-        }
-        
-        .signup-container {
-          background: white;
-          backdrop-filter: blur(20px);
-          border-radius: 24px;
-          padding: 40px;
-          width: 100%;
-          max-width: 480px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(0, 0, 0, 0.2);
-          position: relative;
-          overflow: hidden;
-          animation: slideIn 0.8s ease-out;
-          max-height: 90vh;
-          overflow-y: auto;
-        }
-
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
-        .logo {
-          text-align: center;
-          margin-bottom: 30px;
-          position: relative;
-          z-index: 2;
-        }
-
-        h1 {
-          text-align: center;
-          color: black;
-          font-size: 32px;
-          font-weight: 700;
-          margin-bottom: 40px;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-          position: relative;
-          z-index: 2;
-        }
-
-        .form-row {
-          display: flex;
-          gap: 15px;
-          margin-bottom: 20px;
-        }
-
-        .form-group {
-          flex: 1;
-          margin-bottom: 20px;
-          position: relative;
-        }
-
-        label {
-          display: block;
-          color: rgba(0, 0, 0, 0.9);
-          font-size: 14px;
-          font-weight: 500;
-          margin-bottom: 8px;
-          position: relative;
-          z-index: 2;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-          width: 100%;
-          padding: 16px 20px;
-          border: 2px solid rgba(0, 0, 0, 0.2);
-          border-radius: 12px;
-          background: rgba(255, 255, 255, 0.1);
-          color: black;
-          font-size: 16px;
-          transition: all 0.3s ease;
-          backdrop-filter: blur(10px);
-          position: relative;
-          z-index: 2;
-          box-sizing: border-box;
-        }
-
-        input[type="text"]::placeholder,
-        input[type="email"]::placeholder,
-        input[type="password"]::placeholder {
-          color: rgba(0, 0, 0, 0.6);
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-          outline: none;
-          border-color: #00d4ff;
-          background: rgba(255, 255, 255, 0.15);
-          box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.2),
-            0 8px 25px rgba(0, 212, 255, 0.3);
-          transform: translateY(-2px);
-        }
-
-        .btn {
-          width: 100%;
-          padding: 16px;
-          border: none;
-          border-radius: 12px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          margin-bottom: 15px;
-          position: relative;
-          overflow: hidden;
-          z-index: 2;
-        }
-
-        .btn-primary {
-          background: #41ecc2;
-          color: black;
-          box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
-        }
-
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0, 212, 255, 0.6);
-        }
-
-        .btn-primary:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-
-        .social-buttons {
-          display: flex;
-          justify-content: center;
-          gap: 20px;
-          margin: 30px 0;
-          position: relative;
-          z-index: 2;
-        }
-
-        .social-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 80px;
-          height: 80px;
-          border-radius: 16px;
-          text-decoration: none;
-          transition: all 0.3s ease;
-          background: rgba(255, 255, 255, 0.1);
-          border: 2px solid rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(10px);
-          cursor: pointer;
-        }
-
-        .social-btn:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .google-btn {
-          background: rgba(234, 67, 53, 0.1);
-          border-color: rgba(234, 67, 53, 0.2);
-          color: #ea4335;
-        }
-
-        .google-btn:hover {
-          background: rgba(234, 67, 53, 0.15);
-          border-color: #ea4335;
-          box-shadow: 0 8px 25px rgba(234, 67, 53, 0.3);
-        }
-
-        .microsoft-btn {
-          background: rgba(0, 164, 241, 0.1);
-          border-color: rgba(0, 164, 241, 0.2);
-          color: #00a4f1;
-        }
-
-        .microsoft-btn:hover {
-          background: rgba(0, 164, 241, 0.15);
-          border-color: #00a4f1;
-          box-shadow: 0 8px 25px rgba(0, 164, 241, 0.3);
-        }
-
-        .apple-btn {
-          background: rgba(0, 0, 0, 0.1);
-          border-color: rgba(0, 0, 0, 0.2);
-          color: #000;
-        }
-
-        .apple-btn:hover {
-          background: rgba(0, 0, 0, 0.15);
-          border-color: #000;
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .footer-links {
-          text-align: center;
-          margin-top: 30px;
-          position: relative;
-          z-index: 2;
-        }
-
-        .footer-links a {
-          color: rgba(0, 0, 0, 0.8);
-          text-decoration: none;
-          font-size: 14px;
-          transition: all 0.3s ease;
-          position: relative;
-          cursor: pointer;
-        }
-
-        .footer-links a:hover {
-          color: #00d4ff;
-          text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-        }
-
-        .footer-links p {
-          color: rgba(0, 0, 0, 0.7);
-          font-size: 14px;
-          margin-bottom: 10px;
-        }
-
-        .password-strength {
-          height: 4px;
-          background: rgba(0, 0, 0, 0.2);
-          border-radius: 2px;
-          margin-top: 8px;
-          overflow: hidden;
-          position: relative;
-        }
-
-        .password-strength-bar {
-          height: 100%;
-          width: 0%;
-          border-radius: 2px;
-          transition: all 0.3s ease;
-        }
-
-        .strength-weak {
-          background: #ff4757;
-          width: 20%;
-        }
-        .strength-fair {
-          background: #ffa502;
-          width: 40%;
-        }
-        .strength-good {
-          background: #2ed573;
-          width: 60%;
-        }
-        .strength-strong {
-          background: #5b86e5;
-          width: 80%;
-        }
-
-        .strength-very-strong{
-          background: #1abc9c;
-          width: 100%;
-        }
-
-        @media (max-width: 600px) {
-          .signup-container {
-            padding: 30px 20px;
-            margin: 10px;
-            max-height: calc(100vh - 20px);
-          }
-
-          .form-row {
-            flex-direction: column;
-            gap: 0;
-          }
-
-          h1 {
-            font-size: 28px;
-          }
-
-          .social-buttons {
-            gap: 15px;
-          }
-
-          .social-btn {
-            width: 70px;
-            height: 70px;
-          }
-        }
-      `}</style>
-      
       <div className="logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
         <div className="website-name" style={{ color: `#00d2a0`, fontWeight: '700', fontSize: '2.2rem' }}>
           PLATE UP
@@ -405,9 +142,12 @@ const SignUp = () => {
       </div>
       
       <h1 style={{color: `#00d2a0`}}>SIGN UP</h1>
+      {error && <p className="error-message">{error}</p>}
+      {message && <p className="success-message">{message}</p>}
       
       <div id="signupForm">
-        <div className="form-row">
+        <form onSubmit={handleSubmit}>
+          <div className="form-row">
           <div className="form-group">
             <label htmlFor="firstName">First Name</label>
             <input
@@ -482,12 +222,13 @@ const SignUp = () => {
         </div>
         
         <button 
-          onClick={handleSubmit}
+          type="submit"
           className="btn btn-primary"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Creating Account...' : 'Create Account'}
         </button>
+        </form>
       </div>
       
       <div className="social-buttons">
