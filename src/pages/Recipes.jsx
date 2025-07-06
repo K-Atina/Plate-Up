@@ -13,6 +13,10 @@ const Recipes = () => {
     const [dietFilter, setDietFilter] = useState('');
     const [recipes, setRecipes] = useState([]);
 
+    //States for API calls
+    const [loading , setLoading] = useState(true);
+    const [error , setError] = useState(null);
+
     //replace this with your actual recipe data or API call
     useEffect(() => {
         
