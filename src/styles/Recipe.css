@@ -140,7 +140,7 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     margin-bottom: 3rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 1rem;
 }
@@ -149,7 +149,7 @@ body {
     display: flex;
     position: relative;
     align-items: center;
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;*/
     border-radius: 25px;
     padding: 8px 16px;
     width: 100%;
