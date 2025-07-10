@@ -169,47 +169,50 @@ const Recipe_S = () => {
                     </div>
 
                     <div className="filters-container">
-                        <select
+                        <div className="top_filters">
+                            <select
                             className="filter-select"
                             value={maxReadyTime}
                             onChange={handleMaxReadyTimeChange}
-                        >
-                            <option value="">Time to Cook</option>
-                            <option value="30">Under 30 min</option>
-                            <option value="60">30-60 min</option>
-                            <option value="120">1-2 hours</option>
-                            <option value="240">2+ hours</option>
-                        </select>
+                            >
+                                <option value="">Time to Cook</option>
+                                <option value="30">Under 30 min</option>
+                                <option value="60">30-60 min</option>
+                                <option value="120">1-2 hours</option>
+                                <option value="240">2+ hours</option>
+                            </select>
 
-                        <select
-                            className="filter-select"
-                            value={selectedCuisine}
-                            onChange={handleCuisineChange}
-                        >
-                            <option value="">Cuisine</option>
-                            <option value="Italian">Italian</option>
-                            <option value="Mexican">Mexican</option>
-                            <option value="Asian">Asian</option>
-                            <option value="Mediterranean">Mediterranean</option>
-                            <option value="American">American</option>
-                            <option value="Indian">Indian</option>
-                            <option value="Middle Eastern">Middle Eastern</option>
-                            <option value="French">French</option>
-                            <option value="Thai">Thai</option>
-                            <option value="Japanese">Japanese</option>
-                        </select>
+                            <select
+                                className="filter-select"
+                                value={selectedCuisine}
+                                onChange={handleCuisineChange}
+                            >
+                                <option value="">Cuisine</option>
+                                <option value="Italian">Italian</option>
+                                <option value="Mexican">Mexican</option>
+                                <option value="Asian">Asian</option>
+                                <option value="Mediterranean">Mediterranean</option>
+                                <option value="American">American</option>
+                                <option value="Indian">Indian</option>
+                                <option value="Middle Eastern">Middle Eastern</option>
+                                <option value="French">French</option>
+                                <option value="Thai">Thai</option>
+                                <option value="Japanese">Japanese</option>
+                            </select>
 
-                        <select
-                            className="filter-select"
-                            value={minServings}
-                            onChange={handleMinServingsChange}
-                        >
-                            <option value="">Number of Servings</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                            <option value="5">5+</option>
-                        </select>
+                            <select
+                                className="filter-select"
+                                value={minServings}
+                                onChange={handleMinServingsChange}
+                            >
+                                <option value="">Number of Servings</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                                <option value="5">5+</option>
+                            </select>
+                        </div>
+                        
 
                         {/* Dietary Restrictions - Checkboxes */}
                         <div className="dietary-restrictions-checkboxes">
@@ -225,7 +228,9 @@ const Recipe_S = () => {
                                         // Disable other checkboxes if 'None' is selected
                                         disabled={restriction.value !== 'none' && selectedIntolerances.includes('none')}
                                     />
-                                    <label htmlFor={`diet-${restriction.value}`}>{restriction.label}</label>
+                                    <label htmlFor={`diet-${restriction.value}`}>
+                                        {restriction.label}
+                                    </label>
                                 </div>
                             ))}
                         </div>
