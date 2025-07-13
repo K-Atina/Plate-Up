@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Recipe_S = () => {
     const [searchInput, setSearchInput] = useState('');
-    const [dietFilter, setDietFilter] = useState(''); // For single diet choice (e.g., Vegetarian, Vegan)
+    const [dietFilter, setDietFilter] = useState(''); // For single diet choice
     const [selectedCuisine, setSelectedCuisine] = useState('');
     const [maxReadyTime, setMaxReadyTime] = useState(''); // For time taken
     const [minServings, setMinServings] = useState(''); // For number of people
@@ -14,18 +14,18 @@ const Recipe_S = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Replace with your actual Spoonacular API key
+    //Spoonacular API key
     const SPOONACULAR_API_KEY = '6b1da363213c48ec9de381ce55b71039';
 
-    // Function to fetch recipes from Spoonacular API
+    // Fetch recipes from Spoonacular API
     const fetchRecipes = useCallback(async () => {
         setLoading(true);
-        setError(null); // Clear any previous errors
+        setError(null);
 
         const queryParams = new URLSearchParams({
             apiKey: SPOONACULAR_API_KEY,
             query: searchInput,
-            number: 20, // You can adjust the number of recipes to fetch
+            number: 20, // number of recipes to fetch
             addRecipeInformation: true,
             instructionsRequired: true,
             fillIngredients: true
