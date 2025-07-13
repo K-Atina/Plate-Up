@@ -32,10 +32,12 @@ body {
 .logo {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  color: #00D2A0;
+  color: none;
   font-weight: 700;
   font-size: 1.2rem;
+  margin-bottom: 0;
 }
 
 .logo-icon {
@@ -47,6 +49,7 @@ body {
   justify-content: center;
   color: white;
   font-size: 16px;
+  background-color: none;
 }
 
 .logo-graphic{
