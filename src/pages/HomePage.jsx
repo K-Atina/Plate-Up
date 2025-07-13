@@ -1,52 +1,129 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/HomepageSignedIn.css';
 import { Link, useNavigate } from "react-router-dom";
 
 const SignedInHomepage = () => {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Mock data - in real app, this would come from API/database
-    const todaysMeals = {
-        breakfast: { title: "Greek Yogurt Berry Bowl", calories: "510 Cal", icon: "🥣", recipeId: "greek-yogurt-bowl" },
-        lunch: { title: "Mediterranean Quinoa Salad", calories: "420 Cal", icon: "🥗", recipeId: "quinoa-salad" },
-        dinner: { title: "Grilled Salmon & Vegetables", calories: "580 Cal", icon: "🐟", recipeId: "grilled-salmon" }
+    // Spoonacular API Key (replace with your actual key if needed for fetching recipe details)
+    const SPOONACULAR_API_KEY = 'YOUR_SPOONACULAR_API_KEY'; // IMPORTANT: Replace with your actual Spoonacular API Key
+
+    // State for dynamic data
+    const [todaysMeals, setTodaysMeals] = useState({
+        breakfast: null,
+        lunch: null,
+        dinner: null
+    });
+    const [recentFavorites, setRecentFavorites] = useState([]);
+    const [quickStats, setQuickStats] = useState({
+        savedRecipes: 0,
+        mealsPlanned: 0,
+        completedMeals: 0, // Placeholder, as this requires more complex tracking
+        streakDays: 0 // Placeholder, as this requires more complex tracking
+    });
+    const [recommendedRecipes, setRecommendedRecipes] = useState([]); // State for recommended recipes - this will now remain empty
+    const [loadingRecommended, setLoadingRecommended] = useState(false); // Loading state for recommended recipes
+    const [apiError, setApiError] = useState(null); // State for API errors
+
+    // Function to get today's day name (e.g., "monday")
+    const getTodayDayName = () => {
+        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const today = new Date();
+        return days[today.getDay()];
     };
 
-    const recentFavorites = [
-        { title: "Protein Pancakes Stack", calories: "450 Cal", icon: "🥞", recipeId: "protein-pancakes" },
-        { title: "Chicken Caesar Wrap", calories: "380 Cal", icon: "🍗", recipeId: "chicken-wrap" },
-        { title: "Zucchini Pasta Primavera", calories: "340 Cal", icon: "🍝", recipeId: "zucchini-pasta" },
-        { title: "Avocado Toast Deluxe", calories: "320 Cal", icon: "🥑", recipeId: "avocado-toast" }
-    ];
+    // Effect to load meal plans and favorites from localStorage
+    useEffect(() => {
+        try {
+            // Load Meal Plans
+            const storedMealPlans = localStorage.getItem('mealPlans');
+            let parsedMealPlans = {};
+            if (storedMealPlans) {
+                parsedMealPlans = JSON.parse(storedMealPlans);
+            }
 
-    const quickStats = {
-        savedRecipes: 42,
-        mealsPlanned: 18,
-        completedMeals: 15,
-        streakDays: 7
+            const todayDay = getTodayDayName();
+            const currentTodaysMeals = parsedMealPlans[todayDay] || { breakfast: null, lunch: null, dinner: null };
+            setTodaysMeals(currentTodaysMeals);
+
+            // Calculate meals planned
+            let plannedCount = 0;
+            Object.values(parsedMealPlans).forEach(dayPlan => {
+                if (dayPlan.breakfast) plannedCount++;
+                if (dayPlan.lunch) plannedCount++;
+                if (dayPlan.dinner) plannedCount++;
+            });
+
+            // Load Favorites
+            const storedFavorites = localStorage.getItem('userFavourites');
+            let parsedFavorites = [];
+            if (storedFavorites) {
+                parsedFavorites = JSON.parse(storedFavorites);
+            }
+            // Limit to a few recent favorites for display on homepage
+            setRecentFavorites(parsedFavorites.slice(0, 4)); // Display up to 4 recent favorites
+
+            // Update Quick Stats
+            setQuickStats(prevStats => ({
+                ...prevStats,
+                savedRecipes: parsedFavorites.length,
+                mealsPlanned: plannedCount
+            }));
+
+        } catch (e) {
+            console.error("Failed to load data from local storage:", e);
+            setApiError("Failed to load some data. Please ensure your browser supports local storage.");
+        }
+    }, []);
+
+    // Effect to fetch recommended recipes (this section is now removed as per user request)
+    // The state and loading state for recommended recipes will remain but won't be populated
+    useEffect(() => {
+        // This effect is now empty as the recommended section is removed.
+        // You could remove the recommendedRecipes state and loadingRecommended state if they are not used elsewhere.
+        setLoadingRecommended(false);
+    }, []);
+
+
+    // Helper function to get meal type icons (reused from MealPlanner)
+    const getMealTypeIcon = (mealType) => {
+        switch (mealType) {
+            case 'breakfast': return '🍳';
+            case 'lunch': return '🍽️';
+            case 'dinner': return '🍛';
+            default: return '🍽️';
+        }
     };
-
-    const recommendedRecipes = [
-        { title: "Quinoa Buddha Bowl", calories: "380 Cal", icon: "🥙", tag: "Vegetarian", recipeId: "quinoa-buddha" },
-        { title: "Teriyaki Chicken", calories: "520 Cal", icon: "🍗", tag: "High Protein", recipeId: "teriyaki-chicken" },
-        { title: "Veggie Stir Fry", calories: "290 Cal", icon: "🥬", tag: "Low Calorie", recipeId: "veggie-stirfry" }
-    ];
 
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            // Navigate to recipes with search query
-            console.log('Searching for:', searchQuery);
-            // In real app: navigate(`/All-Recipes?search=${encodeURIComponent(searchQuery)}`);
+            navigate(`/All-Recipes?search=${encodeURIComponent(searchQuery)}`);
         }
     };
 
-    const handleViewRecipe = (recipeId) => {
-        console.log('Viewing recipe:', recipeId);
-        // In real app: navigate(`/My-Recipes/${recipeId}`);
+    const handleViewRecipe = async (recipe) => {
+        // If the recipe object is already detailed (e.g., from meal plan), use it directly
+        // Otherwise, fetch full details if only ID is available (e.g., from basic favorites list)
+        if (recipe && recipe.id && !recipe.extendedIngredients) {
+            setApiError(null); // Clear previous errors
+            try {
+                const response = await fetch(`https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${SPOONACULAR_API_KEY}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
+                }
+                const detailedRecipe = await response.json();
+                navigate('/View-Recipe/:id', { state: { recipeData: detailedRecipe } });
+            } catch (error) {
+                console.error("Error fetching full recipe details:", error);
+                setApiError("Failed to load recipe details. Please try again or check your API key.");
+            }
+        } else if (recipe) {
+            navigate('/View-Recipe/:id', { state: { recipeData: recipe } });
+        }
     };
 
-    const navigate =useNavigate();
     const handleNavigate = (path) => {
         navigate(path);
     };
@@ -63,23 +140,23 @@ const SignedInHomepage = () => {
             <header className="header">
                 <div className="nav-container">
                     <div className="logo">
-                        <div className="logo-link" onClick={() => handleNavigate('/home')}>
-                          <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{height: '38px', width: '38px'}} />
-                          Plate Up
-                        </div>
+                        <Link to="/HomePage_SignedIn" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{ height: '38px', width: '38px' }} />
+                            <span>PLATE UP</span>
+                        </Link>
                     </div>
                     <nav>
                         <ul className="nav-links">
-                            <li><span className="nav-link active" onClick={() => handleNavigate('/Home')}>Home</span></li>
-                            <li><span className="nav-link" onClick={() => handleNavigate('/All-Recipes')}>Recipes</span></li>
-                            <li><span className="nav-link" onClick={() => handleNavigate('/Meal-Planner')}>Meal Plans</span></li>
-                            <li><span className="nav-link" onClick={() => handleNavigate('/Favourites')}>Favourites</span></li>
-                            <li><span className="nav-link" onClick={() => handleNavigate('/About-Us-User')}>About</span></li>
+                            <li><Link to="/HomePage_SignedIn" className="active">Home</Link></li>
+                            <li><Link to="/All-Recipes">Recipes</Link></li>
+                            <li><Link to="/Meal-Planner">Meal Plans</Link></li>
+                            <li><Link to="/Favourites">Favourites</Link></li>
+                            <li><Link to="/About-Us-User">About</Link></li>
                         </ul>
                     </nav>
                     <div className="auth-buttons">
-                        <span className="btn-signin" onClick={() => handleNavigate('/')}>Log Out</span>
-                        <span className="btn-started" onClick={() => handleNavigate('/Profile')}>Profile</span>
+                        <Link to="/" className="btn-signin">Log Out</Link>
+                        <Link to="/Profile" className="btn-started">Profile</Link>
                     </div>
                 </div>
             </header>
@@ -88,15 +165,21 @@ const SignedInHomepage = () => {
             <main className="main-content">
                 {/* Welcome Section */}
                 <div className="welcome-section">
-                    <h1 className="welcome-title" style={{textAlign:'center'}}>
+                    <h1 className="welcome-title" style={{ textAlign: 'center' }}>
                         Welcome back!👋
                     </h1>
                     <p className="welcome-subtitle">
-                        {getTodaysDate()} • <Link to="/All-Recipes">Ready to plan your healthy meals?</Link>
+                        {getTodaysDate()} • <Link style={{color: '#40e0d0', textDecoration: 'none'}} to="/All-Recipes">Ready to plan your healthy meals?</Link>
                     </p>
                 </div>
 
-                
+                {/* Display API Error if any */}
+                {apiError && (
+                    <div style={{ color: 'red', textAlign: 'center', margin: '1rem 0', padding: '0.5rem', border: '1px solid red', borderRadius: '5px', backgroundColor: '#ffe6e6' }}>
+                        {apiError}
+                    </div>
+                )}
+
                 {/* Quick Stats */}
                 <div className="quick-stats">
                     <div className="stats-grid">
@@ -123,27 +206,46 @@ const SignedInHomepage = () => {
                 <div className="section">
                     <div className="section-header">
                         <h2 className="section-title">Today's Meals</h2>
-                        <span className="section-link" onClick={() => handleNavigate('/Meal-Planner')}>
+                        <Link to="/Meal-Planner" className="section-link">
                             View Full Plan →
-                        </span>
+                        </Link>
                     </div>
-                    <div className="meals-grid"  style={{backgroundColor: '#f7f7f7'}}>
+                    <div className="meals-grid" style={{ backgroundColor: '#f7f7f7' }}>
                         {Object.entries(todaysMeals).map(([mealType, meal]) => (
                             <div key={mealType} className="meal-card">
-                                <div className="meal-info">
-                                    <div className="meal-icon">{meal.icon}</div>
-                                    <div>
-                                        <div className="meal-type">{mealType}</div>
-                                        <div className="meal-title">{meal.title}</div>
-                                        <div className="meal-calories">{meal.calories}</div>
+                                {meal ? (
+                                    <>
+                                        <div className="meal-info">
+                                            <div className="meal-icon">
+                                                {meal.image ? (
+                                                    <img src={meal.image} alt={meal.title} style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }} />
+                                                ) : (
+                                                    getMealTypeIcon(mealType)
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="meal-type">{mealType.charAt(0).toUpperCase() + mealType.slice(1)}</div>
+                                                <div className="meal-title">{meal.title}</div>
+                                                <div className="meal-calories">
+                                                    {meal.readyInMinutes && `${meal.readyInMinutes} min`}
+                                                    {meal.servings && ` • ${meal.servings} servings`}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handleViewRecipe(meal)}
+                                            className="meal-button"
+                                        >
+                                            View Recipe
+                                        </button>
+                                    </>
+                                ) : (
+                                    <div className="empty-meal-slot">
+                                        <div className="meal-icon">{getMealTypeIcon(mealType)}</div>
+                                        <div className="meal-type">No {mealType} planned</div>
+                                        <Link to="/Meal-Planner" className="add-meal-button">Add Meal</Link>
                                     </div>
-                                </div>
-                                <button
-                                    onClick={() => handleViewRecipe(meal.recipeId)}
-                                    className="meal-button"
-                                >
-                                    View Recipe
-                                </button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -153,59 +255,42 @@ const SignedInHomepage = () => {
                 <div className="section">
                     <div className="section-header">
                         <h2 className="section-title">Recent Favorites</h2>
-                        <span className="section-link" onClick={() => handleNavigate('/Favourites')}>
+                        <Link to="/Favourites" className="section-link">
                             View All →
-                        </span>
+                        </Link>
                     </div>
-                    <div className="favorites-grid" style={{display:'flex',flexDirection: 'row', justifyContent:'center', gap:'1rem'}}>
-                        {recentFavorites.map((recipe, index) => (
-                            <div key={index} className="favorite-card" onClick={() => handleViewRecipe(recipe.recipeId)}>
-                                <div className="favorite-info">
-                                    <div className="favorite-icon">{recipe.icon}</div>
-                                    <div>
-                                        <div className="favorite-title">{recipe.title}</div>
-                                        <div className="favorite-calories">{recipe.calories}</div>
+                    <div className="favorites-grid" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: '1rem' }}>
+                        {recentFavorites.length > 0 ? (
+                            recentFavorites.map((recipe, index) => (
+                                <div key={index} className="favorite-card" onClick={() => handleViewRecipe(recipe)}>
+                                    <div className="favorite-info">
+                                        <div className="favorite-icon">
+                                            {recipe.image ? (
+                                                <img src={recipe.image} alt={recipe.title} style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }} />
+                                            ) : (
+                                                '❤️' // Fallback icon for favorites
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="favorite-title">{recipe.title}</div>
+                                            <div className="favorite-calories">
+                                                {recipe.readyInMinutes && `${recipe.readyInMinutes} min`}
+                                                {recipe.servings && ` • ${recipe.servings} servings`}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Recommended Recipes */}
-                <div className="section">
-                    <div className="section-header">
-                        <h2 className="section-title">Recommended For You</h2>
-                        <span className="section-link" onClick={() => handleNavigate('/All-Recipes')}>
-                            Browse All →
-                        </span>
-                    </div>
-                    <div className="recommended-grid" style={{display:'flex',flexDirection: 'row', justifyContent:'center', gap:'1rem'}}>
-                        {recommendedRecipes.map((recipe, index) => (
-                            <div key={index} className="recommended-card">
-                                <div className="recommended-info">
-                                    <div className="recommended-icon">{recipe.icon}</div>
-                                    <div>
-                                        <div className="recommended-title">{recipe.title}</div>
-                                        <div className="recommended-calories">{recipe.calories}</div>
-                                        <div className="recommended-tag">{recipe.tag}</div>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => handleViewRecipe(recipe.recipeId)}
-                                    className="recommended-button"
-                                >
-                                    View Recipe
-                                </button>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p style={{ textAlign: 'center', color: '#555', width: '100%' }}>No recent favorites. Add some recipes to your favorites!</p>
+                        )}
                     </div>
                 </div>
 
                 {/* Quick Actions */}
                 <div className="section">
                     <h2 className="section-title">Quick Actions</h2>
-                    <div className="actions-grid" style={{display:'flex',flexDirection: 'row', justifyContent:'center', gap:'1rem'}}>
+                    <div className="actions-grid" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: '1rem' }}>
                         <div className="action-link" onClick={() => handleNavigate('/Meal-Planner')}>
                             <div className="action-card">
                                 <div className="action-icon">📅</div>
@@ -239,9 +324,10 @@ const SignedInHomepage = () => {
                 <div className="footer-container">
                     <div>
                         <div className="footer-brand">
-                            <div className="footer-brand-link" onClick={() => handleNavigate('/home')}>
-                                PLATE UP
-                            </div>
+                            <Link to="/HomePage_SignedIn" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <img src="/icons/Logo.png" alt="Logo" className="logo-img" style={{ height: '38px', width: '38px' }} />
+                                <span>PLATE UP</span>
+                            </Link>
                         </div>
                         <p className="footer-description">
                             Simplify your healthy eating through personalized meal planning, nutritious recipe discovery, and organized shopping lists.
@@ -250,9 +336,9 @@ const SignedInHomepage = () => {
                     <div className="footer-section">
                         <h3>Features</h3>
                         <ul className="footer-links">
-                            <li><span onClick={() => handleNavigate('/All-Recipes')}>Recipe Search</span></li>
-                            <li><span onClick={() => handleNavigate('/Meal-Planner')}>Meal Planning</span></li>
-                            <li><span onClick={() => handleNavigate('/shopping-list')}>Shopping Lists</span></li>
+                            <li><Link to="/All-Recipes" style={{ textDecoration: 'none', color: '#a0aec0' }}>Recipe Search</Link></li>
+                            <li><Link to="/Meal-Planner" style={{ textDecoration: 'none', color: '#a0aec0' }}>Meal Planning</Link></li>
+                            <li><Link to="/Shopping-List" style={{ textDecoration: 'none', color: '#a0aec0' }}>Shopping Lists</Link></li>
                         </ul>
                     </div>
                     <div className="footer-section">
