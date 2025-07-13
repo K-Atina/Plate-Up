@@ -1,21 +1,44 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/Recipe.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { RiSearchLine } from 'react-icons/ri';
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 
 const Recipe_S = () => {
+    const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
-    const [dietFilter, setDietFilter] = useState(''); // For single diet choice
+    const [dietFilter, setDietFilter] = useState('');
     const [selectedCuisine, setSelectedCuisine] = useState('');
-    const [maxReadyTime, setMaxReadyTime] = useState(''); // For time taken
-    const [minServings, setMinServings] = useState(''); // For number of people
-    const [selectedIntolerances, setSelectedIntolerances] = useState([]); // For multiple dietary restrictions
+    const [maxReadyTime, setMaxReadyTime] = useState('');
+    const [minServings, setMinServings] = useState('');
+    const [selectedIntolerances, setSelectedIntolerances] = useState([]);
 
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    // State to keep track of favorited recipes (for UI feedback)
+    const [favoritedRecipes, setFavoritedRecipes] = useState({});
 
-    //Spoonacular API key
-    const SPOONACULAR_API_KEY = '6b1da363213c48ec9de381ce55b71039';
+    // Spoonacular API key
+    const SPOONACULAR_API_KEY = '5e4e856e5b354ae1b55eacedc0c8ad37'; // Ensure your actual key is here
+
+    // Load favorited recipes from localStorage on initial mount
+    useEffect(() => {
+        try {
+            const storedFavourites = localStorage.getItem('userFavourites');
+            if (storedFavourites) {
+                const parsedFavourites = JSON.parse(storedFavourites);
+                // Convert array of favorite recipe objects into a map for quick lookup by ID
+                const favMap = parsedFavourites.reduce((acc, recipe) => {
+                    acc[recipe.id] = true;
+                    return acc;
+                }, {});
+                setFavoritedRecipes(favMap);
+            }
+        } catch (e) {
+            console.error("Failed to load favorited recipes from local storage:", e);
+        }
+    }, []);
 
     // Fetch recipes from Spoonacular API
     const fetchRecipes = useCallback(async () => {
@@ -25,13 +48,12 @@ const Recipe_S = () => {
         const queryParams = new URLSearchParams({
             apiKey: SPOONACULAR_API_KEY,
             query: searchInput,
-            number: 20, // number of recipes to fetch
+            number: 20,
             addRecipeInformation: true,
             instructionsRequired: true,
             fillIngredients: true
         });
 
-        // Add filters if they are selected
         if (dietFilter) {
             queryParams.append('diet', dietFilter);
         }
@@ -58,23 +80,21 @@ const Recipe_S = () => {
             setRecipes(data.results);
         } catch (err) {
             console.error("Error fetching recipes:", err);
-            setError("Failed to load recipes. Please try again later.");
+            setError("Failed to load recipes. Please check your API key or try again later.");
         } finally {
             setLoading(false);
         }
-    }, [searchInput, dietFilter, selectedCuisine, maxReadyTime, minServings, selectedIntolerances]); // Dependencies for useCallback
+    }, [searchInput, dietFilter, selectedCuisine, maxReadyTime, minServings, selectedIntolerances]);
 
-    // Initial fetch when component mounts, and re-fetch when searchInput or any filter changes
     useEffect(() => {
-        // Debounce search input to avoid too many API calls
         const handler = setTimeout(() => {
             fetchRecipes();
-        }, 500); //
+        }, 500);
 
         return () => {
             clearTimeout(handler);
         };
-    }, [fetchRecipes]); 
+    }, [fetchRecipes]);
 
     const handleSearchChange = (e) => {
         setSearchInput(e.target.value);
@@ -98,28 +118,70 @@ const Recipe_S = () => {
 
     const handleIntoleranceChange = (e) => {
         const { value, checked } = e.target;
-        if (checked) {
-            setSelectedIntolerances((prev) => [...prev, value]);
+        if (value === 'none') {
+            setSelectedIntolerances(checked ? ['none'] : []);
+            if (checked) {
+                setDietFilter('');
+            }
         } else {
-            setSelectedIntolerances((prev) => prev.filter((item) => item !== value));
+            setSelectedIntolerances((prev) => {
+                const newIntolerances = checked
+                    ? [...prev.filter(item => item !== 'none'), value]
+                    : prev.filter((item) => item !== value);
+                return newIntolerances.length === 0 ? ['none'] : newIntolerances;
+            });
         }
     };
 
-    // Dietary Restriction options that map to Spoonacular's `diet` and `intolerances`
+    const handleViewRecipe = (recipe) => {
+        // This is where the full recipe object is passed to the /view-recipe route
+        navigate('/View-Recipe/:id', { state: { recipeData: recipe } });
+    };
+
+    const handleAddToPlan = (recipe) => {
+        navigate('/meal-planner', { state: { recipeToAdd: recipe } });
+    };
+
+    const handleToggleFavorite = (recipe) => {
+        const isCurrentlyFavorited = favoritedRecipes[recipe.id];
+        const newFavoritedState = {
+            ...favoritedRecipes,
+            [recipe.id]: !isCurrentlyFavorited
+        };
+        setFavoritedRecipes(newFavoritedState);
+
+        let currentFavouritesArray = JSON.parse(localStorage.getItem('userFavourites') || '[]');
+        if (!isCurrentlyFavorited) {
+            if (!currentFavouritesArray.some(fav => fav.id === recipe.id)) {
+                currentFavouritesArray.push({
+                    id: recipe.id,
+                    title: recipe.title,
+                    image: recipe.image,
+                    readyInMinutes: recipe.readyInMinutes,
+                    servings: recipe.servings
+                });
+            }
+        } else {
+            currentFavouritesArray = currentFavouritesArray.filter(fav => fav.id !== recipe.id);
+        }
+        localStorage.setItem('userFavourites', JSON.stringify(currentFavouritesArray));
+
+        console.log(`Toggling favorite for recipe ID: ${recipe.id}. New state: ${!isCurrentlyFavorited}`);
+    };
+
     const allDietaryRestrictions = [
-        { label: 'None', value: 'none', type: 'special' }, // Special handling for 'None'
+        { label: 'None', value: 'none', type: 'special' },
         { label: 'Vegetarian', value: 'vegetarian', type: 'diet' },
         { label: 'Vegan', value: 'vegan', type: 'diet' },
-        { label: 'Gluten-free', value: 'gluten', type: 'intolerance' }, // Maps to 'gluten' intolerance
-        { label: 'Keto', value: 'ketogenic', type: 'diet' }, // Spoonacular uses 'ketogenic'
+        { label: 'Gluten-free', value: 'gluten', type: 'intolerance' },
+        { label: 'Keto', value: 'ketogenic', type: 'diet' },
         { label: 'Paleo', value: 'paleo', type: 'diet' },
-        { label: 'Dairy-free', value: 'dairy', type: 'intolerance' }, // Maps to 'dairy' intolerance
-        { label: 'Nut-free', value: 'peanut,tree nut', type: 'intolerance' } // Maps to multiple intolerances
+        { label: 'Dairy-free', value: 'dairy', type: 'intolerance' },
+        { label: 'Nut-free', value: 'peanut,tree nut', type: 'intolerance' }
     ];
 
-
     return (
-        <div style={{backgroundColor: 'white'}}>
+        <div style={{ backgroundColor: 'white' }}>
             {/* Header */}
             <header className="header">
                 <div className="nav-container">
@@ -128,21 +190,21 @@ const Recipe_S = () => {
                             src="/icons/Logo.png"
                             alt="Logo"
                             className="logo-img"
-                            style={{height: '38px', width: '38px'}}
+                            style={{ height: '38px', width: '38px' }}
                         />
                         PLATE UP
                     </div>
                     <nav>
                         <ul className="nav-links">
-                            <li><Link to ="/Home">Home</Link></li>
-                            <li><Link to ="#" className="active">Recipes</Link></li>
-                            <li><Link to ="/Meal-Planner">Meal Plans</Link></li>
+                            <li><Link to="/Home">Home</Link></li>
+                            <li><Link to="#" className="active">Recipes</Link></li>
+                            <li><Link to="/Meal-Planner">Meal Plans</Link></li>
                             <li><Link to="/Favourites">Favourites</Link></li>
                             <li><Link to="/About-Us-User">About</Link></li>
                         </ul>
                     </nav>
                     <div className="auth-buttons">
-                        <Link to ="/" className="btn-signin">Log Out</Link>
+                        <Link to="/" className="btn-signin">Log Out</Link>
                         <Link to="/Profile" className="btn-started">Profile</Link>
                     </div>
                 </div>
@@ -171,9 +233,9 @@ const Recipe_S = () => {
                     <div className="filters-container">
                         <div className="top_filters">
                             <select
-                            className="filter-select"
-                            value={maxReadyTime}
-                            onChange={handleMaxReadyTimeChange}
+                                className="filter-select"
+                                value={maxReadyTime}
+                                onChange={handleMaxReadyTimeChange}
                             >
                                 <option value="">Time to Cook</option>
                                 <option value="30">Under 30 min</option>
@@ -212,7 +274,6 @@ const Recipe_S = () => {
                                 <option value="5">5+</option>
                             </select>
                         </div>
-                        
 
                         {/* Dietary Restrictions - Checkboxes */}
                         <div className="dietary-restrictions-checkboxes">
@@ -225,7 +286,6 @@ const Recipe_S = () => {
                                         value={restriction.value}
                                         checked={selectedIntolerances.includes(restriction.value)}
                                         onChange={handleIntoleranceChange}
-                                        // Disable other checkboxes if 'None' is selected
                                         disabled={restriction.value !== 'none' && selectedIntolerances.includes('none')}
                                     />
                                     <label htmlFor={`diet-${restriction.value}`}>
@@ -246,11 +306,38 @@ const Recipe_S = () => {
                     ) : (
                         recipes.map((recipe) => (
                             <div key={recipe.id} className="recipe-card">
-                                <img src={recipe.image} alt={recipe.title} className="recipe-card-image" />
-                                <h3 className="recipe-card-title">{recipe.title}</h3>
-                                <p>Ready in: {recipe.readyInMinutes} minutes</p>
-                                <p>Servings: {recipe.servings}</p>
-                                <Link to={`/recipe/${recipe.id}`} className="view-recipe-button">View Recipe</Link>
+                                <img src={recipe.image} alt={recipe.title} className="recipe-image" />
+                                <div className="recipe-content">
+                                    <div className="recipe-header">
+                                        <h4 className="recipe-title">{recipe.title}</h4>
+                                        {/* Favorite Button */}
+                                        <button
+                                            className="favorite-btn"
+                                            onClick={() => handleToggleFavorite(recipe)}
+                                            aria-label="Add to favorites"
+                                        >
+                                            {favoritedRecipes[recipe.id] ? <AiFillHeart /> : <AiOutlineHeart />}
+                                        </button>
+                                    </div>
+                                    <div className="recipe-stats">
+                                        {recipe.readyInMinutes && <p>Ready in: {recipe.readyInMinutes} min</p>}
+                                        {recipe.servings && <p>Servings: {recipe.servings}</p>}
+                                    </div>
+                                    <div className="recipe-buttons">
+                                        <button
+                                            className="btn-view"
+                                            onClick={() => handleViewRecipe(recipe)}
+                                        >
+                                            View Recipe
+                                        </button>
+                                        <button
+                                            className="btn-add"
+                                            onClick={() => handleAddToPlan(recipe)}
+                                        >
+                                            Add to Plan
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         ))
                     )}
@@ -266,7 +353,7 @@ const Recipe_S = () => {
                                 src="/icons/Logo.png"
                                 alt="Logo"
                                 className="logo-img"
-                                style={{height: '38px', width: '38px'}}
+                                style={{ height: '38px', width: '38px' }}
                             />
                             PLATE UP
                         </div>
@@ -277,27 +364,21 @@ const Recipe_S = () => {
                     <div className="footer-section">
                         <h3>Features</h3>
                         <ul className="footer-links">
-                            <Link to style={{textDecoration: 'none', color: '#a0aec0'}} href="#">
-                                <p>Recipe Search</p>
-                            </Link>
-                            <Link to style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/meal-planner.html">
-                                <p>Meal Planning</p>
-                            </Link>
-                            <Link to style={{textDecoration: 'none', color: '#a0aec0'}} href="/pages/shoppinglist.html">
-                                <p>Shopping Lists</p>
-                            </Link>
+                            <li><Link to="/All-Recipes" style={{ textDecoration: 'none', color: '#a0aec0' }}>Recipe Search</Link></li>
+                            <li><Link to="/Meal-Planner" style={{ textDecoration: 'none', color: '#a0aec0' }}>Meal Planning</Link></li>
+                            <li><Link to="/Shopping-list" style={{ textDecoration: 'none', color: '#a0aec0' }}>Shopping Lists</Link></li>
                         </ul>
                     </div>
                     <div className="footer-section">
                         <h3>Support</h3>
                         <ul className="footer-links">
-                            <li><a href="#">Email: example@gmail.com</a></li>
-                            <li><a href="#">Call: 0715 340 778</a></li>
+                            <li><a href="mailto:example@gmail.com">Email: example@gmail.com</a></li>
+                            <li><a href="tel:+254715340778">Call: 0715 340 778</a></li>
                         </ul>
                     </div>
                 </div>
                 <div className="footer-bottom">
-                    <p>© 2025 «PLATE UP». All rights reserved.</p>
+                    <p>© 2025 PLATE UP. All rights reserved.</p>
                 </div>
             </footer>
         </div>

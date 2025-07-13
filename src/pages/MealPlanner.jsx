@@ -1,86 +1,284 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; 
-import '../styles/MealPlanner.css'; 
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import '../styles/MealPlanner.css';
 
 const MealPlanner = () => {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
+    const location = useLocation(); // Hook to access navigation state
 
-    const [mealPlans, setMealPlans] = useState({
-        monday: {
-            breakfast: { title: "Greek Yogurt Berry Bowl", calories: "510 Cal Per Servings", icon: "🥣", recipeId: "greek-yogurt-bowl" },
-            lunch: { title: "Mediterranean Quinoa Salad", calories: "420 Cal Per Servings", icon: "🥗", recipeId: "quinoa-salad" },
-            dinner: { title: "Grilled Salmon & Vegetables", calories: "580 Cal Per Servings", icon: "🐟", recipeId: "grilled-salmon" }
-        },
-        tuesday: {
-            breakfast: null,
-            lunch: null,
-            dinner: null
-        },
-        wednesday: {
-            breakfast: { title: "Protein Pancakes Stack", calories: "450 Cal Per Servings", icon: "🥞", recipeId: "protein-pancakes" },
-            lunch: { title: "Chicken Caesar Wrap", calories: "380 Cal Per Servings", icon: "🍗", recipeId: "chicken-wrap" },
-            dinner: { title: "Zucchini Pasta Primavera", calories: "340 Cal Per Servings", icon: "🍝", recipeId: "zucchini-pasta" }
-        },
-        thursday: {
-            breakfast: { title: "Avocado Toast Deluxe", calories: "320 Cal Per Servings", icon: "🥑", recipeId: "avocado-toast" },
-            lunch: { title: "Buddha Bowl Supreme", calories: "480 Cal Per Servings", icon: "🥙", recipeId: "buddha-bowl" },
-            dinner: { title: "Lean Beef Stir Fry", calories: "520 Cal Per Servings", icon: "🍖", recipeId: "beef-stirfry" }
-        },
-        friday: {
-            breakfast: null,
-            lunch: null,
-            dinner: null
-        },
-        saturday: {
-            breakfast: { title: "Weekend Protein Waffles", calories: "510 Cal Per Servings", icon: "🧇", recipeId: "protein-waffles" },
-            lunch: { title: "Cauliflower Pizza", calories: "390 Cal Per Servings", icon: "🍕", recipeId: "cauliflower-pizza" },
-            dinner: { title: "Garlic Shrimp Linguine", calories: "620 Cal Per Servings", icon: "🦐", recipeId: "shrimp-linguine" }
-        },
-        sunday: {
-            breakfast: { title: "Sunday Veggie Omelet", calories: "380 Cal Per Servings", icon: "🍳", recipeId: "veggie-omelet" },
-            lunch: { title: "Hearty Lentil Soup", calories: "290 Cal Per Servings", icon: "🍲", recipeId: "lentil-soup" },
-            dinner: { title: "Herb Roasted Chicken", calories: "540 Cal Per Servings", icon: "🍗", recipeId: "roasted-chicken" }
+    // Spoonacular API Key (replace with your actual key)
+    const SPOONACULAR_API_KEY = 'YOUR_SPOONACULAR_API_KEY'; // IMPORTANT: Replace with your actual Spoonacular API Key
+
+    // State to store the meal plans for the week
+    const [mealPlans, setMealPlans] = useState(() => {
+        // Initialize meal plans from localStorage or with default empty structure
+        try {
+            const storedPlans = localStorage.getItem('mealPlans');
+            if (storedPlans) {
+                return JSON.parse(storedPlans);
+            }
+        } catch (e) {
+            console.error("Failed to load meal plans from local storage:", e);
         }
+        // Default empty structure if no stored plans or error
+        return {
+            monday: { breakfast: null, lunch: null, dinner: null },
+            tuesday: { breakfast: null, lunch: null, dinner: null },
+            wednesday: { breakfast: null, lunch: null, dinner: null },
+            thursday: { breakfast: null, lunch: null, dinner: null },
+            friday: { breakfast: null, lunch: null, dinner: null },
+            saturday: { breakfast: null, lunch: null, dinner: null },
+            sunday: { breakfast: null, lunch: null, dinner: null }
+        };
     });
 
+    // State to manage search inputs for each meal slot
     const [searchInputs, setSearchInputs] = useState({});
 
+    // State to keep track of the currently selected meal slot for adding recipes
+    const [selectedSlot, setSelectedSlot] = useState(null); // { day: 'monday', mealType: 'breakfast' }
+
+    // State to store filtered search suggestions for each meal slot
+    const [filteredSearchSuggestions, setFilteredSearchSuggestions] = useState({});
+    const [loadingSearchSuggestions, setLoadingSearchSuggestions] = useState({});
+
+    // State to track which slot's favorites dropdown is open
+    const [showFavoritesDropdownForSlot, setShowFavoritesDropdownForSlot] = useState(null); // 'day-mealType' string
+
+    // State to store the list of favorited recipes from localStorage (basic info)
+    const [favoritesListBasic, setFavoritesListBasic] = useState([]);
+    // State to store full details of favorited recipes, fetched on demand
+    const [favoritesListDetailed, setFavoritesListDetailed] = useState([]);
+    const [loadingFavorites, setLoadingFavorites] = useState(false);
+
+
+    // Load basic favorites from localStorage when the component mounts
+    useEffect(() => {
+        try {
+            const storedFavourites = localStorage.getItem('userFavourites');
+            if (storedFavourites) {
+                setFavoritesListBasic(JSON.parse(storedFavourites));
+            }
+        } catch (e) {
+            console.error("Failed to load basic favorites from local storage:", e);
+            setFavoritesListBasic([]);
+        }
+    }, []);
+
+    // Effect to fetch detailed favorite recipe data when the dropdown is opened
+    useEffect(() => {
+        const fetchDetailedFavorites = async () => {
+            if (showFavoritesDropdownForSlot && favoritesListBasic.length > 0) {
+                setLoadingFavorites(true);
+                const detailedRecipes = [];
+                for (const basicRecipe of favoritesListBasic) {
+                    try {
+                        const response = await fetch(`https://api.spoonacular.com/recipes/${basicRecipe.id}/information?apiKey=${SPOONACULAR_API_KEY}`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const data = await response.json();
+                        detailedRecipes.push(data);
+                    } catch (error) {
+                        console.error(`Error fetching details for favorite recipe ID ${basicRecipe.id}:`, error);
+                        // Optionally, add a placeholder or skip this recipe
+                        detailedRecipes.push({ ...basicRecipe, error: true }); // Mark as error
+                    }
+                }
+                setFavoritesListDetailed(detailedRecipes);
+                setLoadingFavorites(false);
+            } else if (!showFavoritesDropdownForSlot) {
+                setFavoritesListDetailed([]); // Clear detailed list when dropdown closes
+            }
+        };
+
+        fetchDetailedFavorites();
+    }, [showFavoritesDropdownForSlot, favoritesListBasic, SPOONACULAR_API_KEY]);
+
+
+    // Effect to handle incoming recipe data from navigation state (from All-Recipes page)
+    useEffect(() => {
+        if (location.state && location.state.recipeToAdd && selectedSlot) {
+            const { recipeToAdd } = location.state;
+            const { day, mealType } = selectedSlot;
+
+            setMealPlans(prevMealPlans => {
+                const updatedMealPlans = {
+                    ...prevMealPlans,
+                    [day]: {
+                        ...prevMealPlans[day],
+                        [mealType]: {
+                            id: recipeToAdd.id,
+                            title: recipeToAdd.title,
+                            image: recipeToAdd.image,
+                            readyInMinutes: recipeToAdd.readyInMinutes,
+                            servings: recipeToAdd.servings,
+                            extendedIngredients: recipeToAdd.extendedIngredients || [],
+                            analyzedInstructions: recipeToAdd.analyzedInstructions || []
+                        }
+                    }
+                };
+                localStorage.setItem('mealPlans', JSON.stringify(updatedMealPlans)); // Persist to localStorage
+                return updatedMealPlans;
+            });
+
+            setSelectedSlot(null); // Clear selected slot after adding
+            // Clear navigation state to prevent re-adding on subsequent renders
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [location.state, selectedSlot, navigate]);
+
+    // Debounce mechanism for search input
+    const debounceTimeout = useRef(null);
+
+    // Function to fetch search suggestions from Spoonacular API
+    const fetchSearchSuggestions = useCallback(async (query, day, mealType) => {
+        if (query.length < 3) { // Only search if query is at least 3 characters long
+            setFilteredSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: [] }));
+            setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: false }));
+            return;
+        }
+
+        setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: true }));
+        try {
+            const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=5&apiKey=${SPOONACULAR_API_KEY}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setFilteredSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: data.results }));
+        } catch (error) {
+            console.error("Error fetching search suggestions:", error);
+            setFilteredSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: [] }));
+        } finally {
+            setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: false }));
+        }
+    }, [SPOONACULAR_API_KEY]);
+
+    // Handle changes in the search input fields with debouncing
     const handleSearchChange = (day, mealType, value) => {
         setSearchInputs(prev => ({
             ...prev,
             [`${day}-${mealType}`]: value
         }));
+
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+        debounceTimeout.current = setTimeout(() => {
+            fetchSearchSuggestions(value, day, mealType);
+        }, 500); // Debounce for 500ms
     };
 
-    const handleViewRecipe = (recipeId) => {
-        navigate(`/My-Recipes/${recipeId}`); 
-    };
-
-    const handleRemoveMeal = (day, mealType) => {
-        setMealPlans(prev => ({
-            ...prev,
-            [day]: {
-                ...prev[day],
-                [mealType]: null
+    // Function to fetch full recipe details for a selected search suggestion
+    const selectRecipeFromSearch = async (recipeId, day, mealType) => {
+        setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: true }));
+        try {
+            const response = await fetch(`https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        }));
+            const recipe = await response.json();
+
+            setMealPlans(prevMealPlans => {
+                const updatedMealPlans = {
+                    ...prevMealPlans,
+                    [day]: {
+                        ...prevMealPlans[day],
+                        [mealType]: {
+                            id: recipe.id,
+                            title: recipe.title,
+                            image: recipe.image,
+                            readyInMinutes: recipe.readyInMinutes,
+                            servings: recipe.servings,
+                            extendedIngredients: recipe.extendedIngredients || [],
+                            analyzedInstructions: recipe.analyzedInstructions || []
+                        }
+                    }
+                };
+                localStorage.setItem('mealPlans', JSON.stringify(updatedMealPlans)); // Persist to localStorage
+                return updatedMealPlans;
+            });
+        } catch (error) {
+            console.error("Error fetching full recipe details for search selection:", error);
+        } finally {
+            setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: false }));
+            // Clear search input and suggestions for this slot
+            setSearchInputs(prev => ({ ...prev, [`${day}-${mealType}`]: '' }));
+            setFilteredSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: [] }));
+        }
     };
 
-    const handleBrowseRecipes = (mealType) => {
-        // Navigate to the general recipes page
-        console.log('Browse recipes for:', mealType); 
-        navigate('/All-Recipes');
+
+    // Function to view a recipe in detail
+    const handleViewRecipe = (recipe) => {
+        // Navigate to the view recipe page, passing the full recipe object
+        navigate('/view-recipe', { state: { recipeData: recipe } });
     };
 
+    // Function to remove a meal from the plan
+    const handleRemoveMeal = (day, mealType) => {
+        setMealPlans(prev => {
+            const updatedMealPlans = {
+                ...prev,
+                [day]: {
+                    ...prev[day],
+                    [mealType]: null
+                }
+            };
+            localStorage.setItem('mealPlans', JSON.stringify(updatedMealPlans)); // Persist to localStorage
+            return updatedMealPlans;
+        });
+    };
+
+    // Function to browse recipes (navigates to All-Recipes page)
+    const handleBrowseRecipes = (day, mealType) => {
+        setSelectedSlot({ day, mealType }); // Set the slot before navigating
+        const searchTerm = searchInputs[`${day}-${mealType}`] || '';
+        navigate('/All-Recipes', { state: { initialSearchInput: searchTerm } }); // Pass search term
+    };
+
+    // Function to toggle the favorites dropdown for a specific slot
     const handleAddFromFavorites = (day, mealType) => {
-        console.log('Add from favorites:', day, mealType);
+        const slotKey = `${day}-${mealType}`;
+        setSelectedSlot({ day, mealType }); // Set selected slot for favorite selection
+        setShowFavoritesDropdownForSlot(showFavoritesDropdownForSlot === slotKey ? null : slotKey);
     };
 
+    // Function to select a favorite recipe from the dropdown
+    const selectFavoriteRecipe = (recipe) => {
+        if (selectedSlot) { // selectedSlot is set when dropdown is opened
+            const { day, mealType } = selectedSlot;
+            setMealPlans(prevMealPlans => {
+                const updatedMealPlans = {
+                    ...prevMealPlans,
+                    [day]: {
+                        ...prevMealPlans[day],
+                        [mealType]: {
+                            id: recipe.id,
+                            title: recipe.title,
+                            image: recipe.image,
+                            readyInMinutes: recipe.readyInMinutes,
+                            servings: recipe.servings,
+                            extendedIngredients: recipe.extendedIngredients || [],
+                            analyzedInstructions: recipe.analyzedInstructions || []
+                        }
+                    }
+                };
+                localStorage.setItem('mealPlans', JSON.stringify(updatedMealPlans)); // Persist to localStorage
+                return updatedMealPlans;
+            });
+            setSelectedSlot(null); // Clear selected slot
+            setShowFavoritesDropdownForSlot(null); // Close the dropdown
+        }
+    };
+
+    // Function to navigate to the shopping list page
     const handleGetShoppingList = () => {
-        // Navigate to shopping list page
         navigate('/shopping-list');
     };
 
+    // Helper function to get meal type icons
     const getMealTypeIcon = (mealType) => {
         switch (mealType) {
             case 'breakfast': return '🍳';
@@ -90,51 +288,107 @@ const MealPlanner = () => {
         }
     };
 
+    // Renders a single meal card (either filled or empty)
     const renderMealCard = (day, mealType, meal) => {
-        if (meal) {
-            return (
-                <div key={mealType} className="meal-card">
-                    <div className="meal-image">{meal.icon}</div>
-                    <div className="meal-content">
-                        <div className="meal-title">{meal.title}</div>
-                        <div className="meal-stats">{meal.calories}</div>
-                        <div className="meal-buttons">
-                            <button className="btn-view" onClick={() => handleViewRecipe(meal.recipeId)}>
-                                View Recipe
-                            </button>
-                            <button className="btn-remove" onClick={() => handleRemoveMeal(day, mealType)}>
-                                Remove
-                            </button>
+        const slotKey = `${day}-${mealType}`;
+        const currentSearchSuggestions = filteredSearchSuggestions[slotKey] || [];
+        const currentSearchInput = searchInputs[slotKey] || '';
+        const isLoadingSearch = loadingSearchSuggestions[slotKey];
+
+        return (
+            <div key={mealType} className="meal-card">
+                {meal ? (
+                    <>
+                        <div className="meal-image">
+                            {meal.image ? (
+                                <img src={meal.image} alt={meal.title} />
+                            ) : (
+                                <span>{getMealTypeIcon(mealType)}</span> // Fallback icon
+                            )}
                         </div>
-                    </div>
-                </div>
-            );
-        } else {
-            return (
-                <div key={mealType} className="empty-meal-card">
-                    <div className="meal-icon">{getMealTypeIcon(mealType)}</div>
-                    <div className="meal-type">Add {mealType.charAt(0).toUpperCase() + mealType.slice(1)}</div>
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Search for a recipe"
-                            value={searchInputs[`${day}-${mealType}`] || ''}
-                            onChange={(e) => handleSearchChange(day, mealType, e.target.value)}
-                        />
-                        <div className="search-icon">🔍</div>
-                    </div>
-                    <button className="browse-btn" onClick={() => handleBrowseRecipes(mealType)}>
-                        Browse Recipes
-                    </button>
-                    <button className="add-favorites-btn" onClick={() => handleAddFromFavorites(day, mealType)}>
-                        Add From Favourites
-                    </button>
-                </div>
-            );
-        }
+                        <div className="meal-content">
+                            <div className="meal-title">{meal.title}</div>
+                            {/* Display readyInMinutes and servings */}
+                            <div className="meal-stats">
+                                {meal.readyInMinutes && `${meal.readyInMinutes} min`}
+                                {meal.servings && ` • ${meal.servings} servings`}
+                            </div>
+                            <div className="meal-buttons">
+                                <button className="btn-view" onClick={() => handleViewRecipe(meal)}>
+                                    View Recipe
+                                </button>
+                                <button className="btn-remove" onClick={() => handleRemoveMeal(day, mealType)}>
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="meal-icon">{getMealTypeIcon(mealType)}</div>
+                        <div className="meal-type">Add {mealType.charAt(0).toUpperCase() + mealType.slice(1)}</div>
+                        <div className="search-container">
+                            <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Search for a recipe"
+                                value={currentSearchInput}
+                                onChange={(e) => handleSearchChange(day, mealType, e.target.value)}
+                            />
+                            <div className="search-icon">🔍</div>
+                            {/* Search Suggestions Dropdown */}
+                            {isLoadingSearch ? (
+                                <div className="search-suggestions-dropdown">Loading...</div>
+                            ) : (
+                                currentSearchInput.length > 0 && currentSearchSuggestions.length > 0 && (
+                                    <div className="search-suggestions-dropdown">
+                                        {currentSearchSuggestions.map(recipe => (
+                                            <div
+                                                key={recipe.id}
+                                                className="suggestion-item"
+                                                onClick={() => selectRecipeFromSearch(recipe.id, day, mealType)}
+                                            >
+                                                <span>{recipe.title}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )
+                            )}
+                        </div>
+                        <button className="browse-btn" onClick={() => handleBrowseRecipes(day, mealType)}>
+                            Browse Recipes
+                        </button>
+                        <button className="add-favorites-btn" onClick={() => handleAddFromFavorites(day, mealType)}>
+                            Add From Favourites
+                        </button>
+                        {/* Favorites Dropdown */}
+                        {showFavoritesDropdownForSlot === slotKey && (
+                            <div className="favorites-dropdown">
+                                {loadingFavorites ? (
+                                    <div>Loading favorites...</div>
+                                ) : favoritesListDetailed.length > 0 ? (
+                                    favoritesListDetailed.map(recipe => (
+                                        <div
+                                            key={recipe.id}
+                                            className="dropdown-item"
+                                            onClick={() => selectFavoriteRecipe(recipe)}
+                                        >
+                                            <span>{recipe.title}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div>No favorite recipes found.</div>
+                                )}
+                                <button className="dropdown-close-btn" onClick={() => setShowFavoritesDropdownForSlot(null)}>Close</button>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+        );
     };
 
+    // Renders the section for a single day
     const renderDaySection = (day, dayData) => {
         return (
             <div key={day} className="day-section">
@@ -149,33 +403,32 @@ const MealPlanner = () => {
     };
 
     return (
-        <div style={{backgroundColor:'#f7f7f7'}}>
+        <div style={{ backgroundColor: '#f7f7f7' }}>
             {/* Header */}
             <header className="header">
                 <div className="nav-container">
                     <div className="logo">
-                        {/* Logo linking to the signed-in home page */}
-                        <Link to="/home" style={{ textDecoration: 'none', color: 'inherit', display: 'flex',justifyContent:'center', alignItems: 'center', gap: '0.5rem' }}>
+                        <Link to="/HomePage_SignedIn" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <img
                                 src="/icons/Logo.png"
                                 alt="Logo"
                                 className="logo-img"
-                                style={{height: '70px', width: '70px',padding: '10px'}}
+                                style={{ height: '38px', width: '38px' }}
                             />
-                            PLATE UP
+                            <span>PLATE UP</span>
                         </Link>
                     </div>
                     <nav>
                         <ul className="nav-links">
                             <li><Link to="/Home">Home</Link></li>
                             <li><Link to="/All-Recipes">Recipes</Link></li>
-                            <li><Link to="/Meal-Planner" className="active">Meal Plans</Link></li> 
+                            <li><Link to="/Meal-Planner" className="active">Meal Plans</Link></li>
                             <li><Link to="/Favourites">Favourites</Link></li>
-                            <li><Link to="/About-Us-User">About</Link></li> 
+                            <li><Link to="/About-Us-User">About</Link></li>
                         </ul>
                     </nav>
                     <div className="auth-buttons">
-                        <Link to="/" className="btn-signin">Log Out</Link> 
+                        <Link to="/" className="btn-signin">Log Out</Link>
                         <Link to="/Profile" className="btn-started">Profile</Link>
                     </div>
                 </div>
@@ -202,15 +455,14 @@ const MealPlanner = () => {
                 <div className="footer-container">
                     <div>
                         <div className="footer-brand">
-                            {/* Logo in footer, linking to home page */}
-                            <Link to="/home-signed-in" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Link to="/HomePage_SignedIn" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <img
                                     src="/icons/Logo.png"
                                     alt="Logo"
                                     className="logo-img"
-                                    style={{height: '38px', width: '38px'}}
+                                    style={{ height: '38px', width: '38px' }}
                                 />
-                                PLATE UP
+                                <span>PLATE UP</span>
                             </Link>
                         </div>
                         <p className="footer-description">
@@ -220,9 +472,9 @@ const MealPlanner = () => {
                     <div className="footer-section">
                         <h3>Features</h3>
                         <ul className="footer-links">
-                            <li><Link to="/My-Recipes">Recipe Search</Link></li>
-                            <li><Link to="/Meal-Planner">Meal Planning</Link></li>
-                            <li><Link to="/Shopping-List">Shopping Lists</Link></li>
+                            <li><Link to="/All-Recipes" style={{ textDecoration: 'none', color: '#a0aec0' }}>Recipe Search</Link></li>
+                            <li><Link to="/Meal-Planner" style={{ textDecoration: 'none', color: '#a0aec0' }}>Meal Planning</Link></li>
+                            <li><Link to="/Shopping-List" style={{ textDecoration: 'none', color: '#a0aec0' }}>Shopping Lists</Link></li>
                         </ul>
                     </div>
                     <div className="footer-section">
