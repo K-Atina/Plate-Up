@@ -19,8 +19,8 @@ const Recipes = () => {
     //null if no error, otherwise will hold error message
     const [error , setError] = useState(null);
 
-    // Spoonacular API Key (Replace with your actual key)
-    const SPOONACULAR_API_KEY = '6b1da363213c48ec9de381ce55b71039';
+    // Spoonacular API Key
+    const SPOONACULAR_API_KEY = '5e4e856e5b354ae1b55eacedc0c8ad37';
 
     const fetchRecipes = async () => {
         setLoading(true);
@@ -111,7 +111,7 @@ const Recipes = () => {
                 </section>
 
                 {/* Search Section */}
-                <section className="search-section">
+                <section className="search-section" style={{display: 'flex', gap: '20px', justifyContent: 'center', alignItems: 'center', marginBottom: '20px'}}>
                     <div className='search-box'>
                         <input 
                         type="text" 
@@ -130,7 +130,7 @@ const Recipes = () => {
                     </div>
 
                     <select 
-                        className="diet-filter" 
+                        className="filter-select" 
                         value={dietFilter}
                         onChange={handleDietChange}
                     >
