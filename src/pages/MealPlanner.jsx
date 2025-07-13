@@ -213,7 +213,7 @@ const MealPlanner = () => {
     // Function to view a recipe in detail
     const handleViewRecipe = (recipe) => {
         // Navigate to the view recipe page, passing the full recipe object
-        navigate('/view-recipe', { state: { recipeData: recipe } });
+        navigate('/View-Recipe/:id', { state: { recipeData: recipe } });
     };
 
     // Function to remove a meal from the plan
