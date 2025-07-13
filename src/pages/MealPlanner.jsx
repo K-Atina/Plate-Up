@@ -7,7 +7,7 @@ const MealPlanner = () => {
     const location = useLocation(); // Hook to access navigation state
 
     // Spoonacular API Key (replace with your actual key)
-    const SPOONACULAR_API_KEY = 'YOUR_SPOONACULAR_API_KEY'; // IMPORTANT: Replace with your actual Spoonacular API Key
+    const SPOONACULAR_API_KEY = '5e4e856e5b354ae1b55eacedc0c8ad37'; // IMPORTANT: Replace with your actual Spoonacular API Key
 
     // State to store the meal plans for the week
     const [mealPlans, setMealPlans] = useState(() => {
@@ -51,6 +51,12 @@ const MealPlanner = () => {
     const [favoritesListDetailed, setFavoritesListDetailed] = useState([]);
     const [loadingFavorites, setLoadingFavorites] = useState(false);
 
+    // State to handle API errors for user feedback
+    const [apiError, setApiError] = useState(null);
+
+    // Debounce mechanism for search input
+    const debounceTimeout = useRef(null);
+
 
     // Load basic favorites from localStorage when the component mounts
     useEffect(() => {
@@ -70,18 +76,19 @@ const MealPlanner = () => {
         const fetchDetailedFavorites = async () => {
             if (showFavoritesDropdownForSlot && favoritesListBasic.length > 0) {
                 setLoadingFavorites(true);
+                setApiError(null); // Clear previous errors
                 const detailedRecipes = [];
                 for (const basicRecipe of favoritesListBasic) {
                     try {
                         const response = await fetch(`https://api.spoonacular.com/recipes/${basicRecipe.id}/information?apiKey=${SPOONACULAR_API_KEY}`);
                         if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
+                            throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
                         }
                         const data = await response.json();
                         detailedRecipes.push(data);
                     } catch (error) {
                         console.error(`Error fetching details for favorite recipe ID ${basicRecipe.id}:`, error);
-                        // Optionally, add a placeholder or skip this recipe
+                        setApiError("Failed to load some favorite recipes. Please check your API key and network connection.");
                         detailedRecipes.push({ ...basicRecipe, error: true }); // Mark as error
                     }
                 }
@@ -89,6 +96,7 @@ const MealPlanner = () => {
                 setLoadingFavorites(false);
             } else if (!showFavoritesDropdownForSlot) {
                 setFavoritesListDetailed([]); // Clear detailed list when dropdown closes
+                setApiError(null); // Clear error when dropdown closes
             }
         };
 
@@ -128,28 +136,29 @@ const MealPlanner = () => {
         }
     }, [location.state, selectedSlot, navigate]);
 
-    // Debounce mechanism for search input
-    const debounceTimeout = useRef(null);
-
     // Function to fetch search suggestions from Spoonacular API
     const fetchSearchSuggestions = useCallback(async (query, day, mealType) => {
         if (query.length < 3) { // Only search if query is at least 3 characters long
             setFilteredSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: [] }));
             setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: false }));
+            setApiError(null); // Clear previous errors
             return;
         }
 
         setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: true }));
+        setApiError(null); // Clear previous errors before new fetch
         try {
-            const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=5&apiKey=${SPOONACULAR_API_KEY}`);
+            // Changed number from 5 to 3
+            const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=3&apiKey=${SPOONACULAR_API_KEY}`);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
             }
             const data = await response.json();
             setFilteredSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: data.results }));
         } catch (error) {
             console.error("Error fetching search suggestions:", error);
             setFilteredSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: [] }));
+            setApiError("Failed to fetch search results. Please check your API key and network connection.");
         } finally {
             setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: false }));
         }
@@ -173,10 +182,11 @@ const MealPlanner = () => {
     // Function to fetch full recipe details for a selected search suggestion
     const selectRecipeFromSearch = async (recipeId, day, mealType) => {
         setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: true }));
+        setApiError(null); // Clear previous errors
         try {
             const response = await fetch(`https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
             }
             const recipe = await response.json();
 
@@ -201,6 +211,7 @@ const MealPlanner = () => {
             });
         } catch (error) {
             console.error("Error fetching full recipe details for search selection:", error);
+            setApiError("Failed to add recipe details. Please try again or check your API key.");
         } finally {
             setLoadingSearchSuggestions(prev => ({ ...prev, [`${day}-${mealType}`]: false }));
             // Clear search input and suggestions for this slot
@@ -301,12 +312,13 @@ const MealPlanner = () => {
                     <>
                         <div className="meal-image">
                             {meal.image ? (
-                                <img src={meal.image} alt={meal.title} />
+                                <img style={{ height: '200px' }} src={meal.image} alt={meal.title} />
                             ) : (
                                 <span>{getMealTypeIcon(mealType)}</span> // Fallback icon
                             )}
                         </div>
-                        <div className="meal-content">
+                        {/* Adjusted inline style to ensure 20px margin below the image */}
+                        <div className="meal-content" style={{ marginTop: '20px' }}>
                             <div className="meal-title">{meal.title}</div>
                             {/* Display readyInMinutes and servings */}
                             <div className="meal-stats">
@@ -443,6 +455,13 @@ const MealPlanner = () => {
                         Get Shopping List
                     </button>
                 </div>
+
+                {/* Display API Error if any */}
+                {apiError && (
+                    <div style={{ color: 'red', textAlign: 'center', margin: '1rem 0', padding: '0.5rem', border: '1px solid red', borderRadius: '5px', backgroundColor: '#ffe6e6' }}>
+                        {apiError}
+                    </div>
+                )}
 
                 {/* Days Sections */}
                 {Object.entries(mealPlans).map(([day, dayData]) =>
