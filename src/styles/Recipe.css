@@ -149,12 +149,12 @@ body {
     display: flex;
     position: relative;
     align-items: center;
-    /*border: 1px solid #ccc;*/
     border-radius: 25px;
     padding: 8px 16px;
     width: 100%;
     max-width: 500px;
     background-color: #fff;
+    border: 1px solid #e2e8f0;
 }
 
 .top_filters{
@@ -168,6 +168,8 @@ body {
     padding: 0;
     font-size: 1rem;
     transition: all 0.3s ease;
+    border: none;
+    outline: none;
 }
 
 .search-icon{
@@ -186,6 +188,7 @@ body {
     background: white;
     min-width: 150px;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .diet-filter:focus {
@@ -195,12 +198,11 @@ body {
 
 /* Recipe Grid */
 .recipes-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: row;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
     gap: 2rem;
     margin-bottom: 3rem;
+    justify-content: center;
 }
 
 .recipe-card {
@@ -210,6 +212,8 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
 }
 
 .recipe-card:hover {
@@ -220,7 +224,10 @@ body {
 .recipe-image {
     width: 100%;
     height: 200px;
-    background: #e2e8f0;
+    object-fit: cover;
+    object-position: center;
+
+    background: #e2e8f0; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -231,6 +238,14 @@ body {
 
 .recipe-content {
     padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* --- NEW/MODIFIED FOR LEFT ALIGNMENT --- */
+    align-items: flex-start; /* Aligns content to the start (left) */
+    text-align: left; /* Ensures text within also aligns left */
+    /* --- END NEW/MODIFIED --- */
 }
 
 .recipe-header {
@@ -238,6 +253,7 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1rem;
+    width: 100%; /* Ensure header takes full width for proper justification */
 }
 
 .recipe-title {
@@ -245,6 +261,9 @@ body {
     font-weight: 700;
     color: #2d3748;
     margin-bottom: 0.5rem;
+    /* --- NEW/MODIFIED FOR LEFT ALIGNMENT --- */
+    text-align: left; /* Explicitly align title left */
+    /* --- END NEW/MODIFIED --- */
 }
 
 .favorite-btn {
@@ -267,11 +286,20 @@ body {
     margin-bottom: 1.5rem;
     color: #718096;
     font-size: 0.9rem;
+    /* --- NEW/MODIFIED FOR LEFT ALIGNMENT --- */
+    width: 100%; /* Ensure stats take full width for proper alignment */
+    justify-content: flex-start; /* Aligns items to the start (left) */
+    /* --- END NEW/MODIFIED --- */
 }
 
 .recipe-buttons {
     display: flex;
     gap: 0.8rem;
+    margin-top: auto;
+    /* --- NEW/MODIFIED FOR LEFT ALIGNMENT --- */
+    width: 100%; /* Ensure buttons take full width for proper alignment */
+    justify-content: flex-start; /* Aligns buttons to the start (left) */
+    /* --- END NEW/MODIFIED --- */
 }
 
 .btn-view {
@@ -335,24 +363,33 @@ body {
     margin-bottom: 1rem;
 }
 
-.footer-brand .logo-icon {
-    background: #00D2A0;
+.footer-brand .logo-img {
+    background: none;
 }
 
 .footer-description {
     color: #a0aec0;
     line-height: 1.8;
     margin-bottom: 1.5rem;
+    /* --- NEW/MODIFIED FOR LEFT ALIGNMENT --- */
+    text-align: left; /* Ensure description aligns left */
+    /* --- END NEW/MODIFIED --- */
 }
 
 .footer-section h3 {
     color: white;
     font-weight: 600;
     margin-bottom: 1rem;
+    /* --- NEW/MODIFIED FOR LEFT ALIGNMENT --- */
+    text-align: left; /* Align footer section headings left */
+    /* --- END NEW/MODIFIED --- */
 }
 
 .footer-links {
     list-style: none;
+    /* --- NEW/MODIFIED FOR LEFT ALIGNMENT --- */
+    text-align: left; /* Align list items left */
+    /* --- END NEW/MODIFIED --- */
 }
 
 .footer-links li {
@@ -400,6 +437,11 @@ body {
     .search-section {
         flex-direction: column;
         text-align: center;
+        align-items: stretch;
+    }
+
+    .search-box {
+        max-width: none;
     }
 
     .recipes-grid {
@@ -410,8 +452,16 @@ body {
     .footer-container {
         grid-template-columns: 1fr;
         gap: 2rem;
-        text-align: center;
+        text-align: center; /* Keep text-align: center for overall footer section on small screens */
     }
+
+    /* Override center alignment for specific footer elements on small screens if desired */
+    .footer-brand,
+    .footer-section h3,
+    .footer-links {
+        text-align: left; /* Ensure these specific elements are left-aligned */
+    }
+
 
     .recipe-buttons {
         flex-direction: column;
@@ -506,37 +556,4 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.dietary-restrictions-checkboxes h4 {
-    margin-top: 0;
-    margin-bottom: 0px;
-    color: #333;
-    font-size: 1em;
-}
-
-.dietary-restrictions-checkboxes div {
-    display: flex;
-    align-items: center;
-    gap: 8px; 
-}
-
-.dietary-restrictions-checkboxes input[type="checkbox"] {
-    transform: scale(1.2); 
-    cursor: pointer;
-}
-
-.dietary-restrictions-checkboxes label {
-    font-size: 0.95em;
-    color: #555;
-    cursor: pointer;
-    margin-bottom: 0;
-}
-
-.dietary-restrictions-checkboxes input[type="checkbox"]:disabled + label {
-    color: #a0a0a0; 
-    cursor: not-allowed;
 }

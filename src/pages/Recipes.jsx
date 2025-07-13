@@ -19,68 +19,60 @@ const Recipes = () => {
     //null if no error, otherwise will hold error message
     const [error , setError] = useState(null);
 
-    //API
-    const fetchInitialRecipes = async () =>{
-        //Set loading state to true since we are fetching data
+    // Spoonacular API Key (Replace with your actual key)
+    const SPOONACULAR_API_KEY = '6b1da363213c48ec9de381ce55b71039';
+
+    const fetchRecipes = async () => {
         setLoading(true);
-        //Resets any previous error messages
         setError(null);
 
-        try{
-            //Used MealDB.com --> Will change to spoonacular
-            //Target APi endpoint
-            const randomApiURl = 'https://www.themealdb.com/api/json/v1/1/random.php';
-            const numRandomRecipes = 10
+        try {
+            let apiUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10`;
 
-            const fetchedRandomRecipes = [];
-            for (let i = 0; i < numRandomRecipes; i++){
-                //we fetch the URL nad return a promise that will resolve promise
-                const response= await fetch (randomApiURl); //Initiates the request to the apiUrl and returns a Promise
-                if (!response.ok){
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data= await response.json();
-                if (data.meals && data.meals.length > 0){
-                    fetchedRandomRecipes.push (data.meals[0]);
-                }
-
+            if (searchInput) {
+                apiUrl += `&query=${searchInput}`;
+            }
+            if (dietFilter) {
+                apiUrl += `&diet=${dietFilter}`;
             }
 
-            if (fetchedRandomRecipes.length>0){
-                setRecipes(fetchedRandomRecipes);
-            }else {
-                setRecipes([]); //If no meals have been found
-                setError("No recipes fetched. The API might be temporarily unvailable");
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-              
-        } catch (err){
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                setRecipes(data.results);
+            } else {
+                setRecipes([]);
+                setError("No recipes found matching your criteria.");
+            }
+        } catch (err) {
             console.error("Failed to fetch recipes:", err);
-            setError("Failed to load recipes. Please check your internet conncetion or try again later.");
-            setRecipes([])
+            setError("Failed to load recipes. Please check your internet connection or try again later.");
+            setRecipes([]);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
     
-    //To call fetchInitialRecipes
+    // To call fetchRecipes on initial load and when filters change
     useEffect(() => {
-        fetchInitialRecipes();//Calling our fetching function
-    }, []) //Ensures that it only runs once
+        fetchRecipes();
+    }, [searchInput, dietFilter]); // Re-run when searchInput or dietFilter changes
 
     const handleSearchChange = (e) => {
         setSearchInput(e.target.value);
-        //Updates 'searchInput' state
     };
 
-    const handleDietChange = (e) =>{
+    const handleDietChange = (e) => {
         setDietFilter(e.target.value);
-        navigate("/Sign-Up")
-    }
+    };
 
-
-    function Redirect(){
-        navigate("/Sign-Up")
-    }
+    const handleSearchSubmit = () => {
+        fetchRecipes(); // Trigger search when icon is clicked or Enter is pressed
+    };
 
     return (
         <div style={{backgroundColor: '#f7f7f7'}}>
@@ -129,26 +121,29 @@ const Recipes = () => {
                         onChange={handleSearchChange}
                         onKeyDown={(e) => {
                             if(e.key === 'Enter'){
-                                Redirect() //When enter key on kenyboard is pressed, user redirected to sign-up
+                                handleSearchSubmit();
                             }
                         }}
                         />
-                        <RiSearchLine className="search-icon" onClick={Redirect}/>
+                        <RiSearchLine className="search-icon" onClick={handleSearchSubmit}/>
                         
                     </div>
 
                     <select 
                         className="diet-filter" 
                         value={dietFilter}
-                        onChange={Redirect}
+                        onChange={handleDietChange}
                     >
                         <option value="">Diet Type</option>
                         <option value="vegetarian">Vegetarian</option>
                         <option value="vegan">Vegan</option>
-                        <option value="keto">Keto</option>
+                        <option value="ketogenic">Keto</option>
                         <option value="paleo">Paleo</option>
-                        <option value="gluten-free">Gluten-Free</option>
-                        <option value="low-carb">Low-Carb</option>
+                        <option value="glutenFree">Gluten-Free</option>
+                        <option value="lowFODMAP">Low-Carb</option> 
+                        {/* Note: Spoonacular uses 'lowFODMAP' for what might be broadly considered low-carb, 
+                           you might want to check their documentation for a more precise match or
+                           add a custom mapping if "low-carb" is a distinct filter in Spoonacular. */}
                     </select>
                 </section>
 
@@ -158,23 +153,25 @@ const Recipes = () => {
                     {error && <p className="error-message">Error: {error}</p>}
 
                     {!loading && !error && recipes.length === 0 && (
-                        <p>No recipes found. Please try again later or check your network.</p>
+                        <p>No recipes found. Please try adjusting your search or filters.</p>
                     )}
 
                     {!loading && !error && recipes.length > 0 && (
                         recipes.map((recipe) => (
-                            <div key={recipe.idMeal} className="recipe-card">
+                            <div key={recipe.id} className="recipe-card">
                                 {/* Display Recipe Image */}
-                                {recipe.strMealThumb && (
+                                {recipe.image && (
                                     <img
-                                        src={recipe.strMealThumb}
-                                        alt={recipe.strMeal}
+                                        src={recipe.image}
+                                        alt={recipe.title}
                                         className="recipe-image"
                                     />
                                 )}
                                 {/* Display Recipe Name */}
-                                <h3>{recipe.strMeal}</h3>
-                                <p>Category: {recipe.strCategory}</p>
+                                <h3>{recipe.title}</h3>
+                                {/* Spoonacular's complexSearch doesn't directly return 'strCategory', 
+                                    you might need to fetch detailed recipe info for categories if needed. */}
+                                {/* <p>Category: {recipe.strCategory}</p> */}
 
                             </div>
                         ))
@@ -224,7 +221,7 @@ const Recipes = () => {
                     </div>
                 </div>
                 <div className="footer-bottom">
-                    <p>© 2025 «PLATE UP». All rights reserved.</p>
+                    <p>© 2025 PLATE UP. All rights reserved.</p>
                 </div>
             </footer>
         </div>

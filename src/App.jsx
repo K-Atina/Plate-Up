@@ -79,7 +79,7 @@ const App = () => {
 
       {/* Benefits Section */}
       <section className="section">
-        <h2>Why Choose MealCraft?</h2>
+        <h2>Why Choose Plate Up?</h2>
         <p className="section-desc">
           Join a community of users who have transformed their eating habits with our platform.
         </p>
@@ -101,7 +101,7 @@ const App = () => {
 
       {/* Steps Section */}
       <section className="section">
-        <h2>How MealCraft Works</h2>
+        <h2>How Plate Up Works</h2>
         <p className="section-desc">
           Get started with healthy meal planning in just three simple steps.
         </p>

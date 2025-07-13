@@ -163,9 +163,9 @@ h1 {
 
 .values {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-items: center;
-  gap: 1rem;
+  gap: 4rem;
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 2.5rem;
@@ -343,4 +343,11 @@ h1 {
   .main-content {
     padding: 0 0.5rem 2rem 0.5rem;
   }
+}
+
+@media (max-width: 650px) {
+  .values {
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
 }
